@@ -5,7 +5,7 @@ import Home from "./pages/Home/Home";
 import io from "socket.io-client";
 import HomePage from "./pages/HomePage/Home";
 import Projects from "./pages/Projects/Projects";
-import Chats from "./pages/Messages/chat";
+import Chat from "./pages/Messages/Chat";
 // import Notes from "./pages/Notes/Notes";
 import ProjectMainView from "./pages/ProjectDashboard/ProjectMainView";
 import CreateProject from "./pages/Projects/CreateProject";
@@ -71,7 +71,7 @@ const App = () => {
             <Route exact path="/logout" element={<Logout />} />
             <Route exact path="/home" element={<Home />} />
             <Route path="/projects" element={<Projects />} />
-            <Route path="/message" element={<Chats />} />
+            <Route path="/message" element={<Chat />} />
             <Route path="/createproject" element={<CreateProject />} />
             <Route
               exact

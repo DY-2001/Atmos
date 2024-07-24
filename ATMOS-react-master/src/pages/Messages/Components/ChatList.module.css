@@ -1,0 +1,36 @@
+.chatListContainer {
+    width: 100%;
+    height: 100%;
+}
+
+.messageTab {
+    width: 100%;
+    height: 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.messageTab:hover {
+    background-color: #e2e2e2;
+    cursor: pointer;
+}
+
+.messageTabActive {
+    background-color: #d0d0d0;
+}
+
+.messageTabName {
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+.noChat {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
