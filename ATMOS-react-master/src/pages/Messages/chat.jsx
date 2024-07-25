@@ -54,6 +54,68 @@ const dummyData = {
     "user 9",
     "user 10",
   ],
+  messages: [
+    {
+      userId: "User 1",
+      userName: "ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddU sdf sdfsdsd sd sd   sd sd   ser 1",
+      content: "Hello World",
+      time: "12:00",
+    },
+    {
+      userId: "66a131ea8a8080ebc9a4dfaf",
+      userName: "Udfsdf sf  sd fsdsersdf sdfsdfsdf sdfsdfs sdf sd sd sd sd sdfsdf sdfdf 1",
+      content: "Hello World",
+      time: "12:00",
+    },
+    {
+      userId: "User 1",
+      userName: "User 1",
+      content: "He fsdfsdfsdfsdfsdfsdfsdf   dsf sd sds sllo World",
+      time: "12:00",
+    },
+    {
+      userId: "66a131ea8a8080ebc9a4dfaf",
+      userName: "User 1",
+      content: "He fsdfsdfsdfsdfsdfsdf  f sdf s fsd f dfsdf sd f sdf sdf sdf sdfsdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddfsdfsdf sdfsdfsdfllo World",
+      time: "12:00",
+    },
+    {
+      userId: "User 1",
+      userName: "User 1",
+      content: "Helfsdfsdfsdfasdfsdaf sdafs adfsdaf sfsf f s fsdf asd fa sd fasdfasf  dfsdf sdf sdf sdlo World",
+      time: "12:00",
+    },
+    {
+      userId: "User 1",
+      userName: "User 1",
+      content: "sfsdfsdfHello World",
+      time: "12:00",
+    },
+    {
+      userId: "User 1",
+      userName: "User 1",
+      content: "sdfasdHello World",
+      time: "12:00",
+    },
+    {
+      userId: "User 1",
+      userName: "User 1",
+      content: "sdfasdHello World",
+      time: "12:00",
+    },
+    {
+      userId: "66a131ea8a8080ebc9a4dfaf",
+      userName: "User 1",
+      content: "Heldsflo World",
+      time: "12:00",
+    },
+    {
+      userId: "User 1",
+      userName: "User 1",
+      content: "Hellofsd World",
+      time: "12:00",
+    },
+  ],
 };
 
 const Chat = () => {
@@ -165,7 +227,7 @@ const Chat = () => {
           setTabSelected={setTabSelected}
           chatTabList={chatTabList}
         />
-        <ChatBox chatBoxData={chatBoxData} />
+        <ChatBox chatBoxData={chatBoxData} user={user} />
       </div>
     </>
   );

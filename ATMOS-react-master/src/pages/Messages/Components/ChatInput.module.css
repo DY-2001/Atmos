@@ -6,8 +6,9 @@
     border-radius: 0.75rem;
     width: 95%;
     position: absolute;
-    bottom: 3.5rem;
+    bottom: 3rem;
     margin: 0 2rem;
+    background-color: white;
 }
 
 .chatInput {
