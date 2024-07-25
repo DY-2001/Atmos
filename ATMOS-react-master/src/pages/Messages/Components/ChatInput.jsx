@@ -1,14 +1,21 @@
 import styles from "./ChatInput.module.css";
 
-const ChatInput = () => {
+const ChatInput = ({
+  handleSendMessage,
+  inputMessage,
+  setInputeMessage,
+  channel,
+}) => {
   return (
     <div className={styles.chatInputContainer}>
       <input
         className={styles.chatInput}
         type="text"
         placeholder="Type a message . . ."
+        value={inputMessage}
+        onChange={(e) => setInputeMessage(e.target.value)}
       />
-      <div className={styles.chatButton}>
+      <div onClick={() => handleSendMessage(channel?.id)} className={styles.chatButton}>
         <img
           style={{ width: "2rem", height: "2rem" }}
           src="./images/send.png"
