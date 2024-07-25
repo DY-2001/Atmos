@@ -4,7 +4,8 @@ import styles from "./ChatSideBar.module.css";
 import ChatList from "./ChatList";
 
 const ChatSideBar = (props) => {
-  const { tabSelected, setTabSelected, chatTabList } = props;  
+  const { tabSelected, setTabSelected, chatTabList, channel, setChannel } =
+    props;
 
   return (
     <div className={styles.chatSideBarContainer}>
@@ -26,7 +27,11 @@ const ChatSideBar = (props) => {
           Direct Message
         </div>
       </div>
-      <ChatList chatTabList={chatTabList} />
+      <ChatList
+        chatTabList={chatTabList}
+        channel={channel}
+        setChannel={setChannel}
+      />
     </div>
   );
 };

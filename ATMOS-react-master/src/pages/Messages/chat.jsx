@@ -57,13 +57,15 @@ const dummyData = {
   messages: [
     {
       userId: "User 1",
-      userName: "ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddU sdf sdfsdsd sd sd   sd sd   ser 1",
+      userName:
+        "ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddU sdf sdfsdsd sd sd   sd sd   ser 1",
       content: "Hello World",
       time: "12:00",
     },
     {
       userId: "66a131ea8a8080ebc9a4dfaf",
-      userName: "Udfsdf sf  sd fsdsersdf sdfsdfsdf sdfsdfs sdf sd sd sd sd sdfsdf sdfdf 1",
+      userName:
+        "Udfsdf sf  sd fsdsersdf sdfsdfsdf sdfsdfs sdf sd sd sd sd sdfsdf sdfdf 1",
       content: "Hello World",
       time: "12:00",
     },
@@ -76,13 +78,15 @@ const dummyData = {
     {
       userId: "66a131ea8a8080ebc9a4dfaf",
       userName: "User 1",
-      content: "He fsdfsdfsdfsdfsdfsdf  f sdf s fsd f dfsdf sd f sdf sdf sdf sdfsdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddfsdfsdf sdfsdfsdfllo World",
+      content:
+        "He fsdfsdfsdfsdfsdfsdf  f sdf s fsd f dfsdf sd f sdf sdf sdf sdfsdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddfsdfsdf sdfsdfsdfllo World",
       time: "12:00",
     },
     {
       userId: "User 1",
       userName: "User 1",
-      content: "Helfsdfsdfsdfasdfsdaf sdafs adfsdaf sfsf f s fsdf asd fa sd fasdfasf  dfsdf sdf sdf sdlo World",
+      content:
+        "Helfsdfsdfsdfasdfsdaf sdafs adfsdaf sfsf f s fsdf asd fa sd fasdfasf  dfsdf sdf sdf sdlo World",
       time: "12:00",
     },
     {
@@ -125,6 +129,7 @@ const Chat = () => {
   const [tabSelected, setTabSelected] = useState(ITabSelected.GROUP);
   const [chatTabList, setChatTabList] = useState([]);
   const [chatBoxData, setChatBoxData] = useState(dummyData);
+  const [channel, setChannel] = useState(null);
 
   useEffect(() => {
     async function getUser() {
@@ -204,6 +209,9 @@ const Chat = () => {
           name: project.projectName,
         };
       });
+      if (newChatList && newChatList.length > 0) {
+        setChannel(newChatList[0]);
+      }
       setChatTabList(newChatList);
     } else if (tabSelected === ITabSelected.DM) {
       const newChatList = allDMs
@@ -214,6 +222,9 @@ const Chat = () => {
           };
         })
         .filter((dm) => dm.id !== user._id);
+      if (newChatList && newChatList.length > 0) {
+        setChannel(newChatList[0]);
+      }
       setChatTabList(newChatList);
     }
   }, [tabSelected, allProjects, allDMs]);
@@ -226,6 +237,8 @@ const Chat = () => {
           tabSelected={tabSelected}
           setTabSelected={setTabSelected}
           chatTabList={chatTabList}
+          channel={channel}
+          setChannel={setChannel}
         />
         <ChatBox chatBoxData={chatBoxData} user={user} />
       </div>

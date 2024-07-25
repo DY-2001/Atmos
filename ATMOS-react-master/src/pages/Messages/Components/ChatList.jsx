@@ -1,12 +1,17 @@
 import styles from "./ChatList.module.css";
 
 const ChatList = (props) => {
-  const { chatTabList } = props;
+  const { chatTabList, channel, setChannel } = props;
   return (
     <div className={styles.chatListContainer}>
       {chatTabList?.length > 0 ? (
         chatTabList.map((people, index) => (
-          <div onClick={null} className={styles.messageTab}>
+          <div
+            onClick={() => setChannel(people)}
+            className={`${styles.messageTab} ${
+              channel.id === people.id ? styles.selectedMessageTab : ""
+            }`}
+          >
             <h1 className={styles.messageTabName}>{people.name}</h1>
           </div>
         ))

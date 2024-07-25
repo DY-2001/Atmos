@@ -13,12 +13,20 @@
 }
 
 .messageTab:hover {
-    background-color: #e2e2e2;
+    background-color: #e4fce1;
     cursor: pointer;
 }
 
 .messageTabActive {
-    background-color: #d0d0d0;
+    background-color: #c0f7b7;
+}
+
+.selectedMessageTab {
+    background-color: #90fd80;
+}
+
+.selectedMessageTab:hover {
+    background-color: #90fd80;
 }
 
 .messageTabName {
