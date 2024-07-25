@@ -63,27 +63,27 @@ const Chat = () => {
     getAllProjects();
   }, [tabSelected]);
 
-  // useEffect(() => {
-  //   const getAllDMs = async () => {
-  //     try {
-  //       const res = await fetch(
-  //         `${process.env.REACT_APP_BACKEND_URL}/message/getAllDMs`,
-  //         {
-  //           method: "GET",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //           },
-  //         }
-  //       );
-  //       const data = res.json();
-  //       setAllDMs(data.DMs);
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   };
-  //   getAllDMs();
-  // }, [tabSelected]);
+  useEffect(() => {
+    const getAllDMs = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/message/getAllDMs`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const data = res.json();
+        setAllDMs(data.users);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getAllDMs();
+  }, [tabSelected]);
 
   useEffect(() => {
     if (tabSelected === ITabSelected.GROUP) {

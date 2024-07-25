@@ -1,4 +1,8 @@
 const Messages = require("../models/Messages");
+const User = require('../models/User');
+const Project = require('../models/Project');
+const mongoose = require("mongoose");
+
 const addMessage = async (req, res) => {
   const { chatId, senderId, text } = req.body;
   const message = new Messages({
@@ -24,7 +28,65 @@ const getMessages = async (req, res) => {
   }
 };
 
+const getDirectMessages = async (req, res) => {
+  const userId = mongoose.Types.ObjectId(req.user._id);
+  try {
+    const projectAggregation = await Project.aggregate([
+      {
+        $match: {
+          $or: [
+            { projectOwner: mongoose.Types.ObjectId(userId) },
+            { projectHighAccessMembers: mongoose.Types.ObjectId(userId) },
+            { projectMediumAccessMembers: mongoose.Types.ObjectId(userId) },
+            { projectLowAccessMembers: mongoose.Types.ObjectId(userId) },
+          ],
+        },
+      },
+      {
+        $project: {
+          highAccessMembers: "$projectHighAccessMembers",
+          mediumAccessMembers: "$projectMediumAccessMembers",
+          lowAccessMembers: "$projectLowAccessMembers",
+        },
+      },
+      {
+        $project: {
+          allMembers: {
+            $setUnion: [
+              "$highAccessMembers",
+              "$mediumAccessMembers",
+              "$lowAccessMembers",
+            ],
+          },
+        },
+      },
+      {
+        $unwind: "$allMembers",
+      },
+      {
+        $group: {
+          _id: null,
+          userIds: { $addToSet: "$allMembers" },
+        },
+      },
+    ]).exec();
+
+    const userIds =
+      projectAggregation.length > 0 ? projectAggregation[0].userIds : [];
+
+    const users = await User.find({
+      _id: { $in: userIds },
+    }).exec();
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users connected to projects:", error);
+    throw error;
+  }
+};
+
 module.exports = {
-    addMessage,
-    getMessages
+  addMessage,
+  getMessages,
+  getDirectMessages,
 };
