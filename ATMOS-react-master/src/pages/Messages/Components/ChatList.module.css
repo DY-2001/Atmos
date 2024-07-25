@@ -1,6 +1,13 @@
 .chatListContainer {
     width: 100%;
     height: calc(100vh - 91px);
+    overflow: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.chatListContainer::-webkit-scrollbar {
+    display: none;
 }
 
 .messageTab {
