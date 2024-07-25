@@ -76,8 +76,8 @@ const Chat = () => {
             },
           }
         );
-        const data = res.json();
-        setAllDMs(data.users);
+        const data = await res.json();
+        setAllDMs(data);
       } catch (e) {
         console.log(e);
       }
@@ -93,13 +93,12 @@ const Chat = () => {
           name: project.projectName,
         };
       });
-      // console.log(newChatList, "this is my console dushyantisthead")
       setChatTabList(newChatList);
     } else if (tabSelected === ITabSelected.DM) {
       const newChatList = allDMs?.map((dm) => {
         return {
           id: dm._id,
-          name: dm.dmName,
+          name: dm.userName,
         };
       });
       setChatTabList(newChatList);
