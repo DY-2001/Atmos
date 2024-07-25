@@ -1,7 +1,9 @@
 .chatSideBarContainer {
-    max-width: 18rem;
+    /* max-width: 18rem; */
+    flex-grow: 1;
     height: 100%;
     border-right: 2px solid #e0e0e0;
+    min-width: 18rem;
 }
 
 .chatListContainer {

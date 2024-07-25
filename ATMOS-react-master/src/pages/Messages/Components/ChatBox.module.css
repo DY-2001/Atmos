@@ -1,0 +1,5 @@
+.chatBoxContainer {
+    flex-grow: 12;
+    overflow: hidden;
+    position: relative;
+}

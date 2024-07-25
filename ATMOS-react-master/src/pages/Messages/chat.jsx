@@ -2,10 +2,58 @@ import React, { useState, useEffect, useRef } from "react";
 import Navbar_v2 from "../../UI/Navbar_v2";
 import styles from "./Chat.module.css";
 import ChatSideBar from "./Components/ChatSideBar";
+import ChatBox from "./Components/ChatBox";
 
 export const ITabSelected = {
   GROUP: "group",
   DM: "dm",
+};
+
+const dummyData = {
+  type: ITabSelected.GROUP,
+  name: "Project 1",
+  members: [
+    "User 1",
+    "User 2",
+    "User 3",
+    "User 4",
+    "User 5",
+    "User 6",
+    "User 7",
+    "user 8",
+    "user 9",
+    "user 10",
+    "User 1",
+    "User 2",
+    "User 3",
+    "User 4",
+    "User 5",
+    "User 6",
+    "User 7",
+    "user 8",
+    "user 9",
+    "user 10",
+    "User 1",
+    "User 2",
+    "User 3",
+    "User 4",
+    "User 5",
+    "User 6",
+    "User 7",
+    "user 8",
+    "user 9",
+    "user 10",
+    "User 1",
+    "User 2",
+    "User 3",
+    "User 4",
+    "User 5",
+    "User 6",
+    "User 7",
+    "user 8",
+    "user 9",
+    "user 10",
+  ],
 };
 
 const Chat = () => {
@@ -14,6 +62,7 @@ const Chat = () => {
   const [allDMs, setAllDMs] = useState([]);
   const [tabSelected, setTabSelected] = useState(ITabSelected.GROUP);
   const [chatTabList, setChatTabList] = useState([]);
+  const [chatBoxData, setChatBoxData] = useState(dummyData);
 
   useEffect(() => {
     async function getUser() {
@@ -95,12 +144,14 @@ const Chat = () => {
       });
       setChatTabList(newChatList);
     } else if (tabSelected === ITabSelected.DM) {
-      const newChatList = allDMs?.map((dm) => {
-        return {
-          id: dm._id,
-          name: dm.userName,
-        };
-      });
+      const newChatList = allDMs
+        ?.map((dm) => {
+          return {
+            id: dm._id,
+            name: dm.userName,
+          };
+        })
+        .filter((dm) => dm.id !== user._id);
       setChatTabList(newChatList);
     }
   }, [tabSelected, allProjects, allDMs]);
@@ -114,6 +165,7 @@ const Chat = () => {
           setTabSelected={setTabSelected}
           chatTabList={chatTabList}
         />
+        <ChatBox chatBoxData={chatBoxData} />
       </div>
     </>
   );

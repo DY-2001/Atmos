@@ -1,0 +1,26 @@
+.chatBoxHeader {
+    width: 100%;
+    padding: 0.25rem 0.5rem;
+    background-color: #BBE9FF;
+    border-bottom: 2px solid #3FA2F6;
+}
+
+.GroupBoxHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.GroupName {
+    font-size: 1.25rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.GroupMembers {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
