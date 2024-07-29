@@ -4,6 +4,7 @@ const Section = require("../models/Section");
 const Task = require("../models/Task");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const Messages = require("../models/Messages");
 // require("../services/redis")
 // const {clearHash} = require("../services/redis")
 const create = async (req, res) => {
@@ -12,6 +13,7 @@ const create = async (req, res) => {
     // clearHash("default")
     //add project to user's project list
     const userId = mongoose.Types.ObjectId(req.body.projectOwner);
+    const userDetail = await User.findById(userId);
     const project = new Project({
       projectName: req.body.projectName,
       projectType: req.body.projectType,
@@ -43,7 +45,20 @@ const create = async (req, res) => {
     });
     const savedProject = await project.save();
 
+    const chat = new Messages({
+      channelId: savedProject._id,
+      channelType: "group",
+      channelName: savedProject.projectName,
+      channelMembers: [
+        {
+          userId: userId,
+          userName: userDetail.userName,
+        },
+      ],
+      channelMessages: [],
+    });
 
+    const savedChat = await chat.save();
 
     const userInfo = await User.findByIdAndUpdate(
       userId,
@@ -59,7 +74,7 @@ const create = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Project created successfully',
+      message: "Project created successfully",
       project: savedProject,
     });
   } catch (err) {
@@ -71,13 +86,16 @@ const create = async (req, res) => {
   }
 };
 
-const update = async (req, res) => { };
+const update = async (req, res) => {};
 
 const deleteProject = async (req, res) => {
   try {
     // clearHash("default")
     const projectId = mongoose.Types.ObjectId(req.params.id);
     const project = await Project.findByIdAndDelete(projectId);
+    const chatDelete = await Messages.findOneAndDelete({
+      channelId: projectId,
+    });
 
     //remove project from user's project list
     const userList = project.projectHighAccessMembers.concat(
@@ -129,7 +147,7 @@ const deleteProject = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Project deleted successfully"
+      message: "Project deleted successfully",
     });
   } catch (err) {
     console.log(err, "Error from project controller -> deleteProject");
@@ -199,7 +217,7 @@ const getUserProjects = async (req, res) => {
     //populate projects from Projects collection
     const projects = await Project.find({ _id: { $in: projectList } }).select(
       "-projectSectionIdList -projectTaskIdList -projectHighAccessMembers -projectMediumAccessMembers -projectLowAccessMembers -projectMission -projectVision -projectDescription -projectStatement -projectGuidelines -projectStartDate -projectEndDate"
-    )
+    );
     // .populate("projectOwner")
     // .populate("projectHighAccessMembers")
     // .populate("projectMediumAccessMembers")
@@ -239,22 +257,37 @@ const getProjectDetails = async (req, res) => {
       .populate("projectLowAccessMembers")
       .populate({
         path: "projectSectionIdList",
-        populate: { path: "taskIdList", populate: { path: "taskAssigneeList" } },
+        populate: {
+          path: "taskIdList",
+          populate: { path: "taskAssigneeList" },
+        },
       })
       .populate("projectTaskIdList");
     // console.log(project, "project from project controller -> getProjectDetails");
 
-    let accessLevel = 'no-access';
+    let accessLevel = "no-access";
     //check user Access level in the project
     const userId = mongoose.Types.ObjectId(req.user._id);
 
     if (project.projectOwner.toString() === userId.toString()) {
       accessLevel = "highAccess";
-    } else if (project.projectHighAccessMembers.map((item) => item._id.toString()).includes(userId.toString())) {
+    } else if (
+      project.projectHighAccessMembers
+        .map((item) => item._id.toString())
+        .includes(userId.toString())
+    ) {
       accessLevel = "highAccess";
-    } else if (project.projectMediumAccessMembers.map((item) => item._id.toString()).includes(userId.toString())) {
+    } else if (
+      project.projectMediumAccessMembers
+        .map((item) => item._id.toString())
+        .includes(userId.toString())
+    ) {
       accessLevel = "mediumAccess";
-    } else if (project.projectLowAccessMembers.map((item) => item._id.toString()).includes(userId.toString())) {
+    } else if (
+      project.projectLowAccessMembers
+        .map((item) => item._id.toString())
+        .includes(userId.toString())
+    ) {
       accessLevel = "lowAccess";
     }
 
@@ -272,7 +305,11 @@ const getProjectDetails = async (req, res) => {
         const sectionFilteredTaskIdList = [];
         const sectionFilteredTaskList = [];
         section.taskIdList.map((task) => {
-          if (task.taskAssigneeList.map((item) => item._id.toString()).includes(userId.toString())) {
+          if (
+            task.taskAssigneeList
+              .map((item) => item._id.toString())
+              .includes(userId.toString())
+          ) {
             sectionFilteredTaskIdList.push(task._id);
             sectionFilteredTaskList.push(task);
           }
@@ -287,16 +324,13 @@ const getProjectDetails = async (req, res) => {
         console.log(filteredSectionList, "filteredSectionList");
         // console.log(project.projectSectionIdList, "project.projectSectionIdList");
         // console.log(project.projectTaskIdList, "project.projectTaskIdList");
-
       });
 
       project.projectSectionIdList = filteredSectionList;
       project.projectTaskIdList = filteredTaskList;
-
     }
 
     // console.log(project, "project from project controller -> getProjectDetails");
-
 
     res.status(200).json({
       success: true,
@@ -316,8 +350,8 @@ const getProjectsDetails = async (req, res) => {
   try {
     const projectIds = mongoose.Types.ObjectId(req.body.allProjects);
     console.log(projectIds);
-    let projects = []
-    projectIds.map(async(projectId)=>{
+    let projects = [];
+    projectIds.map(async (projectId) => {
       const project = await Project.findById(projectId)
         .populate("projectOwner")
         .populate("projectHighAccessMembers")
@@ -325,11 +359,14 @@ const getProjectsDetails = async (req, res) => {
         .populate("projectLowAccessMembers")
         .populate({
           path: "projectSectionIdList",
-          populate: { path: "taskIdList", populate: { path: "taskAssigneeList" } },
+          populate: {
+            path: "taskIdList",
+            populate: { path: "taskAssigneeList" },
+          },
         })
         .populate("projectTaskIdList");
-        projects.push(project)
-    })
+      projects.push(project);
+    });
     res.status(200).json({
       success: true,
       message: "Project details fetched successfully",
@@ -344,16 +381,33 @@ const getProjectsDetails = async (req, res) => {
   }
 };
 
-
-
-
-
 const addTeamMember = async (req, res) => {
   try {
     // clearHash("default")
     const projectId = mongoose.Types.ObjectId(req.params.id);
     const userId = mongoose.Types.ObjectId(req.body.userId);
+    // const projectDetail = await Project.findById(projectId);
+    const userDetail = await User.findById(userId);
     const accessLevel = req.body.accessLevel;
+    const chat = await Messages.findOne({ channelId: projectId });
+
+    chat.channelMembers.findIndex(
+      (item) => item.userId.toString() === userId.toString()
+    ) === -1 &&
+      chat.channelMembers.push({
+        userId: userId,
+        userName: userDetail.userName,
+      });
+
+    const savedChat = await chat.save();
+
+    // const dmChat = new Messages({
+    //   channelId: projectId,
+    //   channelType: "dm",
+    //   channelName: "",
+    //   channelMembers: [projectDetail.projectOwner, userId],
+    //   channelMessages: [],
+    // });
 
     const response = await User.findByIdAndUpdate(
       userId,
@@ -510,7 +564,6 @@ const changeUserAccessLevel = async (req, res) => {
           },
           { new: true }
         );
-
       } else if (newAccessLevel === "mediumAccess") {
         const projectRes = await Project.findByIdAndUpdate(
           projectId,
@@ -530,7 +583,6 @@ const changeUserAccessLevel = async (req, res) => {
             },
           },
           { new: true }
-
         );
       }
 
@@ -539,26 +591,22 @@ const changeUserAccessLevel = async (req, res) => {
         message: "User access level changed successfully",
         accessLevel: newAccessLevel,
       });
-
-    }
-    else {
+    } else {
       console.log("You don't have high access to this project");
       res.status(500).json({
         success: false,
         message: "You don't have high access to this project",
       });
     }
-
   } catch (err) {
     console.log(err, "Error from project controller -> changeUserAccessLevel");
     res.status(500).json({
       success: false,
-      message: 'Something went wrong!',
+      message: "Something went wrong!",
       error: err,
     });
   }
 };
-
 
 const removeTeamMember = async (req, res) => {
   try {
@@ -567,13 +615,20 @@ const removeTeamMember = async (req, res) => {
     const userId = mongoose.Types.ObjectId(req.body.userId);
     const currUser = mongoose.Types.ObjectId(req.user._id);
 
+    const chat = await Messages.findOne({ channelId: projectId });
+
+    chat.channelMembers = chat.channelMembers.filter(
+      (item) => item.userId.toString() !== userId.toString()
+    );
+
+    const savedChat = await chat.save();
+
     //remove user from project's access list
-    console.log('removeTeamMember : ', projectId, userId, currUser);
+    console.log("removeTeamMember : ", projectId, userId, currUser);
 
     const project = await Project.findById(projectId);
 
     if (project.projectHighAccessMembers.includes(currUser)) {
-
       if (project.projectHighAccessMembers.includes(userId)) {
         const projectRes = await Project.findByIdAndUpdate(
           projectId,
@@ -625,30 +680,21 @@ const removeTeamMember = async (req, res) => {
         success: true,
         message: "User removed from project",
       });
-
-    }
-    else {
+    } else {
       res.status(500).json({
         success: false,
         message: "You don't have high access to this project",
       });
     }
-
   } catch (err) {
     console.log(err, "Error from project controller -> removeTeamMember");
     res.status(500).json({
       success: false,
       error: err,
-      message: 'Something went wrong!'
+      message: "Something went wrong!",
     });
   }
 };
-
-
-
-
-
-
 
 module.exports = {
   create,
@@ -661,5 +707,5 @@ module.exports = {
   updateLastUsed,
   changeUserAccessLevel,
   removeTeamMember,
-  getProjectsDetails
+  getProjectsDetails,
 };

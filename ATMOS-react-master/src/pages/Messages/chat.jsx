@@ -143,6 +143,10 @@ const Chat = () => {
   }, [tabSelected, channel]);
 
   useEffect(() => {
+
+  }, [])
+
+  useEffect(() => {
     async function getUser() {
       try {
         const res = await fetch(
@@ -157,7 +161,6 @@ const Chat = () => {
         );
 
         const data = await res.json();
-        // console.log("data", data)
         if (data.success) {
           setUser(data.user);
         }
