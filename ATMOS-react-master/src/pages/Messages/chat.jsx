@@ -128,7 +128,7 @@ const Chat = () => {
   const [allDMs, setAllDMs] = useState([]);
   const [tabSelected, setTabSelected] = useState(ITabSelected.GROUP);
   const [chatTabList, setChatTabList] = useState([]);
-  const [chatBoxData, setChatBoxData] = useState(dummyData);
+  const [chatBoxData, setChatBoxData] = useState({});
   const [channel, setChannel] = useState(null);
   const [inputMessage, setInputMessage] = useState("");
 
@@ -137,14 +137,33 @@ const Chat = () => {
     //set inputmessage in database and refetch the messages
   };
 
-  useEffect(() => {
-    setInputMessage("");
-    //reset all when tabSelected or channel changes 
-  }, [tabSelected, channel]);
+  // useEffect(() => {
+  //   setInputMessage("");
+  //   //reset all when tabSelected or channel changes 
+  // }, [tabSelected, channel]);
 
   useEffect(() => {
+    if(!channel || !channel?.id) return;
+    const getGroupChat = async () => {
+      try {
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/message/${channel.id}`, {
+          method: "GET", 
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          }
+        })
+        
+        const data = await res.json();
+        setChatBoxData(data);
+        // console.log("dushyantistheading", data);
+      } catch (e) {
+        console.log(e)
+      }
+    }
 
-  }, [])
+    getGroupChat();
+  }, [channel])
 
   useEffect(() => {
     async function getUser() {
@@ -243,16 +262,16 @@ const Chat = () => {
     }
   }, [tabSelected, allProjects, allDMs]);
 
-  useEffect(() => {
-    if (!channel) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!channel) {
+  //     return;
+  //   }
 
-    //here channel means particular chatTabList element (project group or DM)
-    // we will take id of channel which will match the ip of chatId in the database
-    // then we will fetch the messages of that channel
-    // and set the chatBoxData with the messages of that channel
-  }, [channel]);
+  //   //here channel means particular chatTabList element (project group or DM)
+  //   // we will take id of channel which will match the ip of chatId in the database
+  //   // then we will fetch the messages of that channel
+  //   // and set the chatBoxData with the messages of that channel
+  // }, [channel]);
 
   return (
     <>
@@ -265,14 +284,14 @@ const Chat = () => {
           channel={channel}
           setChannel={setChannel}
         />
-        <ChatBox
+        {chatBoxData && <ChatBox
           chatBoxData={chatBoxData}
           user={user}
           handleSendMessage={handleSendMessage}
           inputMessage={inputMessage}
           setInputMessage={setInputMessage}
           channel={channel}
-        />
+        />}
       </div>
     </>
   );

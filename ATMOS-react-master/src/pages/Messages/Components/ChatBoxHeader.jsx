@@ -3,25 +3,32 @@ import styles from "./ChatBoxHeader.module.css";
 import { ITabSelected } from "../Chat";
 
 const ChatBoxHeader = (props) => {
-  const { chatBoxData } = props;
+  const { chatBoxData, user } = props;
 
+  console.log("dushyantistheading ", chatBoxData, user);
   const members = useMemo(() => {
-    if (chatBoxData.type === ITabSelected.GROUP) {
-      return chatBoxData.members.join(", ");
+    if (chatBoxData.channelType === ITabSelected.GROUP) {
+      const memberNames = chatBoxData.channelMembers.map((member) => {
+        if (member.userId === user._id) {
+          return `${member.userName} (You)`;
+        }
+        return member.userName;
+      });
+      return memberNames.join(", ");
     }
     return "";
   }, [chatBoxData]);
 
   return (
     <div className={styles.chatBoxHeader}>
-      {chatBoxData.type === ITabSelected.GROUP ? (
+      {chatBoxData.channelType === ITabSelected.GROUP ? (
         <div className={styles.GroupBoxHeader}>
-          <div className={styles.GroupName}>{chatBoxData.name}</div>
+          <div className={styles.GroupName}>{chatBoxData.channelName}</div>
           <div className={styles.GroupMembers}>{members}</div>
         </div>
       ) : (
         <div className={styles.GroupBoxHeader}>
-          <div className={styles.GroupName}>{chatBoxData.name}</div>
+          <div className={styles.GroupName}>{chatBoxData.channelName}</div>
         </div>
       )}
     </div>

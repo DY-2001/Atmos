@@ -12,12 +12,12 @@ const ChatBox = (props) => {
     handleSendMessage,
     channel,
   } = props;
-  const { messages } = chatBoxData;
+  const { channelMessages } = chatBoxData;
 
   return (
     <div className={styles.chatBoxContainer}>
-      <ChatBoxHeader chatBoxData={chatBoxData} />
-      {messages.length > 0 && <ChatMessages messages={messages} user={user} />}
+      <ChatBoxHeader chatBoxData={chatBoxData} user={user} />
+      {channelMessages?.length > 0 && <ChatMessages messages={channelMessages} user={user} />}
       <ChatInput
         handleSendMessage={handleSendMessage}
         inputMessage={inputMessage}

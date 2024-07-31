@@ -63,8 +63,8 @@ const useStyles = createStyles((theme) => ({
 const ProjectList = ({ projects, userInfo }) => {
   const { classes } = useStyles();
   const [user, setUser] = useState(userInfo);
-  console.log(user, "user from project list");
-  console.log(projects, "projects from project list");
+  // console.log(user, "user from project list");
+  // console.log(projects, "projects from project list");
 
   const handleLinkClick = async (project) => {
     const res = await fetch(
