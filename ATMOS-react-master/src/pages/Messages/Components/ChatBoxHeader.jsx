@@ -9,7 +9,7 @@ const ChatBoxHeader = (props) => {
   const members = useMemo(() => {
     if (chatBoxData.channelType === ITabSelected.GROUP) {
       const memberNames = chatBoxData.channelMembers.map((member) => {
-        if (member.userId === user._id) {
+        if (member.userId === user?._id) {
           return `${member.userName} (You)`;
         }
         return member.userName;

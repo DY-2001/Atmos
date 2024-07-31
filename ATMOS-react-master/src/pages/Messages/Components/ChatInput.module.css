@@ -22,4 +22,8 @@
 .chatButton {
     padding: 0.625rem 1rem;
     cursor: pointer;
+    outline: none;
+    border: none;
+    border-radius: 1rem;
+    background: none;
 }

@@ -7,21 +7,28 @@ const ChatInput = ({
   channel,
 }) => {
   return (
-    <div className={styles.chatInputContainer}>
-      <input
-        className={styles.chatInput}
-        type="text"
-        placeholder="Type a message . . ."
-        value={inputMessage}
-        onChange={(e) => setInputMessage(e.target.value)}
-      />
-      <div onClick={() => handleSendMessage(channel?.id)} className={styles.chatButton}>
-        <img
-          style={{ width: "2rem", height: "2rem" }}
-          src="./images/send.png"
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSendMessage(channel?.id);
+      }}
+    >
+      <div className={styles.chatInputContainer}>
+        <input
+          className={styles.chatInput}
+          type="text"
+          placeholder="Type a message . . ."
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
         />
+        <button type="submit" className={styles.chatButton}>
+          <img
+            style={{ width: "2rem", height: "2rem" }}
+            src="./images/send.png"
+          />
+        </button>
       </div>
-    </div>
+    </form>
   );
 };
 
