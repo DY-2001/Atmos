@@ -133,37 +133,66 @@ const Chat = () => {
   const [inputMessage, setInputMessage] = useState("");
 
   const handleSendMessage = (channelId) => {
-    //collect channel id which is chatid in database and 
-    //set inputmessage in database and refetch the messages
+    if (!inputMessage || !user) return;
+    const newMessage = {
+      userId: user?._id,
+      userName: user.userName,
+      content: inputMessage,
+    };
+    setInputMessage("");
+
+    const addChat = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/message/sendmessage/${channelId}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({ newMessage }),
+          }
+        );
+        const data = await res.json();
+        setChatBoxData(data);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    addChat();
   };
 
   // useEffect(() => {
   //   setInputMessage("");
-  //   //reset all when tabSelected or channel changes 
+  //   //reset all when tabSelected or channel changes
   // }, [tabSelected, channel]);
 
   useEffect(() => {
-    if(!channel || !channel?.id) return;
+    if (!channel || !channel?.id) return;
     const getGroupChat = async () => {
       try {
-        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/message/${channel.id}`, {
-          method: "GET", 
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        const res = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/message/${channel.id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
           }
-        })
-        
+        );
+
         const data = await res.json();
         setChatBoxData(data);
-        // console.log("dushyantistheading", data);
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
-    }
+    };
 
     getGroupChat();
-  }, [channel])
+  }, [channel]);
 
   useEffect(() => {
     async function getUser() {
@@ -262,17 +291,6 @@ const Chat = () => {
     }
   }, [tabSelected, allProjects, allDMs]);
 
-  // useEffect(() => {
-  //   if (!channel) {
-  //     return;
-  //   }
-
-  //   //here channel means particular chatTabList element (project group or DM)
-  //   // we will take id of channel which will match the ip of chatId in the database
-  //   // then we will fetch the messages of that channel
-  //   // and set the chatBoxData with the messages of that channel
-  // }, [channel]);
-
   return (
     <>
       {user && <Navbar_v2 activeLink={"/message"} user={user} />}
@@ -284,14 +302,16 @@ const Chat = () => {
           channel={channel}
           setChannel={setChannel}
         />
-        {chatBoxData && <ChatBox
-          chatBoxData={chatBoxData}
-          user={user}
-          handleSendMessage={handleSendMessage}
-          inputMessage={inputMessage}
-          setInputMessage={setInputMessage}
-          channel={channel}
-        />}
+        {chatBoxData && (
+          <ChatBox
+            chatBoxData={chatBoxData}
+            user={user}
+            handleSendMessage={handleSendMessage}
+            inputMessage={inputMessage}
+            setInputMessage={setInputMessage}
+            channel={channel}
+          />
+        )}
       </div>
     </>
   );

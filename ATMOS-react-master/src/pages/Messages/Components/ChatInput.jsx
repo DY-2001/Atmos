@@ -3,7 +3,7 @@ import styles from "./ChatInput.module.css";
 const ChatInput = ({
   handleSendMessage,
   inputMessage,
-  setInputeMessage,
+  setInputMessage,
   channel,
 }) => {
   return (
@@ -13,7 +13,7 @@ const ChatInput = ({
         type="text"
         placeholder="Type a message . . ."
         value={inputMessage}
-        onChange={(e) => setInputeMessage(e.target.value)}
+        onChange={(e) => setInputMessage(e.target.value)}
       />
       <div onClick={() => handleSendMessage(channel?.id)} className={styles.chatButton}>
         <img

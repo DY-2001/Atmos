@@ -4,7 +4,7 @@ const Project = require("../models/Project");
 const mongoose = require("mongoose");
 
 // const addMessage = async (req, res) => {
-//   const { chatId, senderId, text } = req.body;
+  //   const { chatId, senderId, text } = req.body;
 //   const message = new Messages({
 //     chatId,
 //     senderId,
@@ -13,10 +13,29 @@ const mongoose = require("mongoose");
 //   try {
 //     const result = await message.save();
 //     res.status(200).json(result);
-//   } catch (error) {
-//     res.status(500).json(error);
-//   }
+  //   } catch (error) {
+    //     res.status(500).json(error);
+  //   }
 // };
+
+const addMessageInChat = async (req, res) => {
+  const { chatId } = req.params;
+  const { newMessage } = req.body;
+  try {
+    const updateChat = await Messages.findOneAndUpdate(
+      { channelId: chatId },
+      {
+        $push: {
+          channelMessages: newMessage,
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json(updateChat);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
 
 const getMessages = async (req, res) => {
   const { chatId } = req.params;
@@ -87,6 +106,7 @@ const getDirectMessages = async (req, res) => {
 
 module.exports = {
   // addMessage,
+  addMessageInChat,
   getMessages,
   getDirectMessages,
 };
