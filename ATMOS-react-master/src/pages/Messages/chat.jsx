@@ -164,11 +164,6 @@ const Chat = () => {
     addChat();
   };
 
-  // useEffect(() => {
-  //   setInputMessage("");
-  //   //reset all when tabSelected or channel changes
-  // }, [tabSelected, channel]);
-
   useEffect(() => {
     if (!channel || !channel?.id) return;
     const getGroupChat = async () => {
