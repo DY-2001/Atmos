@@ -71,7 +71,7 @@
     "recharts": "^2.5.0",
     "redux": "^4.2.0",
     "sass": "^1.58.3",
-    "socket.io-client": "^4.6.1",
+    "socket.io-client": "^4.7.5",
     "stream-chat": "^8.4.1",
     "stream-chat-react": "^10.7.3",
     "styled-components": "^5.3.9",
