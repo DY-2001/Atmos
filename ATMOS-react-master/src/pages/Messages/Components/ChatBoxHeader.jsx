@@ -5,7 +5,6 @@ import { ITabSelected } from "../Chat";
 const ChatBoxHeader = (props) => {
   const { chatBoxData, user } = props;
 
-  console.log("dushyantistheading ", chatBoxData, user);
   const members = useMemo(() => {
     if (chatBoxData.channelType === ITabSelected.GROUP) {
       const memberNames = chatBoxData.channelMembers.map((member) => {

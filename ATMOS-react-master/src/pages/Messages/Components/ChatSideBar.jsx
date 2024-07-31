@@ -18,14 +18,14 @@ const ChatSideBar = (props) => {
         >
           Project Groups
         </div>
-        <div
+        {/* <div
           className={`${styles.tabContainer} ${
             tabSelected === ITabSelected.DM ? styles.selectedTab : ""
           }`}
           onClick={() => setTabSelected(ITabSelected.DM)}
         >
           Direct Message
-        </div>
+        </div> */}
       </div>
       <ChatList
         chatTabList={chatTabList}
