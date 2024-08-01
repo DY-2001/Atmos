@@ -83,7 +83,7 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "set PORT=3000 && react-scripts start",
+    "start": "react-app-rewired start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -109,9 +109,5 @@
   "devDependencies": {
     "chai": "^4.3.7",
     "mocha": "^10.2.0"
-  },
-  "browser": {
-    "crypto": false,
-    "stream": false
   }
 }
