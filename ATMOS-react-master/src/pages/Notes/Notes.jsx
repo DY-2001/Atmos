@@ -62,6 +62,7 @@ const Notes = () => {
         }
       );
       const data = await res.json();
+      console.log("dushyantistnoting", data)
       if (data.success) {
         console.log(data.message);
         setNotes(data.notes);

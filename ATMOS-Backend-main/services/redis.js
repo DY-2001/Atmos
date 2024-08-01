@@ -14,6 +14,7 @@ client.on("error", (err) => {
 
 const clientConnect = async () => {
   await client.connect();
+  // client.flushAll();
 };
 
 clientConnect();
