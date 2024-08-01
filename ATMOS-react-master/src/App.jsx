@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useRef, createContext } from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./UI/Navbar";
 import Home from "./pages/Home/Home";
-import io from "socket.io-client";
 import HomePage from "./pages/HomePage/Home";
 import Projects from "./pages/Projects/Projects";
 import Chat from "./pages/Messages/Chat";
@@ -29,22 +28,14 @@ import { login } from "./features/userSlice";
 import { useDispatch } from "react-redux";
 import NoteEditor from "./pages/Notes/NoteEditor";
 import Page404 from "./pages/Extra/Page404";
+
 // 6,50,000 + 2,50,000 + 1,00,000 + 9,10,000 + 1,00,000
 
 // 40,000 + 35,000 +
 
-export const SocketContext = createContext();
 const App = () => {
   const dispatch = useDispatch();
-
   const token = localStorage.getItem("token");
-
-  const socket = useRef();
-
-  useEffect(() => {
-    socket.current = io("http://localhost:9000");
-    console.log("dushyantistheading here we are in socket");
-  }, []);
 
   useEffect(() => {
     async function getUser() {
@@ -69,79 +60,73 @@ const App = () => {
     }
   }, []);
   return (
-    <SocketContext.Provider value={socket}>
-      <div>
-        <Router>
-          <div className="App">
-            <Routes>
-              <Route exact path="/" element={<HomePage />} />
-              <Route exact path="/notes" element={<Notes />} />
-              <Route exact path="/signup" element={<SignUp />} />
-              <Route exact path="/login" element={<Login />} />
-              <Route exact path="/profile" element={<UserProfile />} />
-              <Route exact path="/logout" element={<Logout />} />
-              <Route exact path="/home" element={<Home />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/message" element={<Chat />} />
-              <Route path="/createproject" element={<CreateProject />} />
-              <Route
-                exact
-                path="/projects/:id/board"
-                element={<ProjectMainView Board />}
-              />
-              <Route exact path="/noteeditor/:id" element={<NoteEditor />} />
-              <Route
-                exact
-                path="/projects/:id/overview"
-                element={<ProjectMainView Overview />}
-              />
-              <Route
-                exact
-                path="/projects/:id/charts"
-                element={<ProjectMainView Charts />}
-              />
-              <Route
-                exact
-                path="/projects/:id/timeline"
-                element={<ProjectMainView Timeline />}
-              />
-              <Route path="/admin-portal" element={<HomeAdmin />} />
-              <Route exact path="/admin-portal/users" element={<UserList />} />
-              <Route
-                exact
-                path="/admin-portal/users/:id"
-                element={<UserSingle />}
-              />
-              <Route
-                exact
-                path="/admin-portal/projects"
-                element={<ProjectList />}
-              />
-              <Route exact path="/admin-portal/tasks" element={<TaskList />} />
-              <Route
-                exact
-                path="/admin-portal/sections"
-                element={<SectionList />}
-              />
-              <Route
-                exact
-                path="/admin-portal/login"
-                element={<LoginAdmin />}
-              />
-              <Route
-                exact
-                path="/admin-portal/logout"
-                element={<LogoutAdmin />}
-              />
-              <Route exact path="/aboutUs" element={<AboutUS />} />
-              <Route exact path="/contactUs" element={<Contact />} />
+    <div>
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route exact path="/" element={<HomePage />} />
+            <Route exact path="/notes" element={<Notes />} />
+            <Route exact path="/signup" element={<SignUp />} />
+            <Route exact path="/login" element={<Login />} />
+            <Route exact path="/profile" element={<UserProfile />} />
+            <Route exact path="/logout" element={<Logout />} />
+            <Route exact path="/home" element={<Home />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/message" element={<Chat />} />
+            <Route path="/createproject" element={<CreateProject />} />
+            <Route
+              exact
+              path="/projects/:id/board"
+              element={<ProjectMainView Board />}
+            />
+            <Route exact path="/noteeditor/:id" element={<NoteEditor />} />
+            <Route
+              exact
+              path="/projects/:id/overview"
+              element={<ProjectMainView Overview />}
+            />
+            <Route
+              exact
+              path="/projects/:id/charts"
+              element={<ProjectMainView Charts />}
+            />
+            <Route
+              exact
+              path="/projects/:id/timeline"
+              element={<ProjectMainView Timeline />}
+            />
+            <Route path="/admin-portal" element={<HomeAdmin />} />
+            <Route exact path="/admin-portal/users" element={<UserList />} />
+            <Route
+              exact
+              path="/admin-portal/users/:id"
+              element={<UserSingle />}
+            />
+            <Route
+              exact
+              path="/admin-portal/projects"
+              element={<ProjectList />}
+            />
+            <Route exact path="/admin-portal/tasks" element={<TaskList />} />
+            <Route
+              exact
+              path="/admin-portal/sections"
+              element={<SectionList />}
+            />
+            <Route exact path="/admin-portal/login" element={<LoginAdmin />} />
+            <Route
+              exact
+              path="/admin-portal/logout"
+              element={<LogoutAdmin />}
+            />
+            <Route exact path="/aboutUs" element={<AboutUS />} />
+            <Route exact path="/contactUs" element={<Contact />} />
 
-              <Route path="*" element={<Page404 />} />
-            </Routes>
-          </div>
-        </Router>
-      </div>
-    </SocketContext.Provider>
+            <Route path="*" element={<Page404 />} />
+          </Routes>
+        </div>
+      </Router>
+    </div>
   );
 };
 

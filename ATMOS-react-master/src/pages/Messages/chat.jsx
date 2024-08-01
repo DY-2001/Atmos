@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar_v2 from "../../UI/Navbar_v2";
 import styles from "./Chat.module.css";
 import ChatSideBar from "./Components/ChatSideBar";
 import ChatBox from "./Components/ChatBox";
-import { SocketContext } from "../../App";
 
 export const ITabSelected = {
   GROUP: "group",
@@ -132,11 +131,7 @@ const Chat = () => {
   const [chatBoxData, setChatBoxData] = useState({});
   const [channel, setChannel] = useState(null);
   const [inputMessage, setInputMessage] = useState("");
-  const socket = useContext(SocketContext);
 
-  useEffect(() => {
-    socket.current.emit("addUsers", user);
-  });
 
   const handleSendMessage = (channelId) => {
     if (!inputMessage || !user) return;
