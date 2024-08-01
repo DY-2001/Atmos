@@ -22,7 +22,7 @@ const CommentArena = ({ taskInfo, taskComments, setTaskComments, userInfo }) => 
         })
         taskInfo.taskComments = taskComments;
         console.log(taskInfo);
-        const saveMsg = await fetch(`http://localhost:8000/taskList/${taskInfo.id}`, {
+        const saveMsg = await fetch(`${process.env.REACT_APP_BACKEND_URL}/taskList/${taskInfo.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(taskInfo),

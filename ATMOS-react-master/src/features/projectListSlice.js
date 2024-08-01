@@ -3,17 +3,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { setProject } from "./projectSlice";
 
-
-
-
 const initialState = {
-    projectList: []
+  projectList: [],
 };
 
-
 export const selectProjectById = (state, projectId) => {
-    return state.projectList.find(project => project.id === projectId);
-}
+  return state.projectList.find((project) => project.id === projectId);
+};
 
 // const selectProject = ({ project }) => {
 //     const dispatch = useDispatch();
@@ -21,39 +17,37 @@ export const selectProjectById = (state, projectId) => {
 // }
 
 export const projectListSlice = createSlice({
-    name: 'projectList',
-    initialState,
-    reducers: {
-        setProjectList: (state, action) => {
-            state.projectList = action.payload;
+  name: "projectList",
+  initialState,
+  reducers: {
+    setProjectList: (state, action) => {
+      state.projectList = action.payload;
+    },
+    getProject: (state, action) => {
+      console.log(state.projectList);
+    },
+    setLastUsed: (state, action) => {
+      console.log(current(state.projectList));
+
+      const { projectId } = action.payload;
+      const project = state.projectList.find(
+        (project) => project.id == Number(projectId)
+      );
+      project.lastUsed = new Date().toString();
+      console.log("setLastUsed project", current(project));
+      console.log("setLastUsed state", current(state.projectList));
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/projectList/${project.id}`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
-        getProject: (state, action) => {
-            console.log(state.projectList);
-
-        },
-        setLastUsed: (state, action) => {
-
-            console.log(current(state.projectList));
-
-            const { projectId } = action.payload;
-            const project = state.projectList.find(project => project.id == Number(projectId));
-            project.lastUsed = new Date().toString();
-            console.log("setLastUsed project", current(project));
-            console.log("setLastUsed state", current(state.projectList));
-            fetch(`http://localhost:8000/projectList/${project.id}`, {
-                method: "PUT",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(project),
-            }).then((result) => {
-                return result.json();
-            });
-        }
-    }
-
-
+        body: JSON.stringify(project),
+      }).then((result) => {
+        return result.json();
+      });
+    },
+  },
 });
 
 export const selectedProjectList = (state) => state.projectList.projectList;

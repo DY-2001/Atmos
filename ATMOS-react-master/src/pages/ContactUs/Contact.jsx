@@ -36,7 +36,7 @@ const Contact = () => {
         if (e) e.preventDefault();
         const message = inputs.message;
         // const messageEnter = message.replace(/\r\n|\r|\n/g, "%0D%0A").replace(' ', "%20");
-        const res = fetch("http://localhost:8000/contactList/", {
+        const res = fetch(`${process.env.REACT_APP_BACKEND_URL}/contactList/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
