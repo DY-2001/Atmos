@@ -136,14 +136,22 @@ const Chat = () => {
 
   useEffect(() => {
     if (!channel) return;
+
     socket.current = socketInit();
+
     socket.current.emit("join", { roomId: channel.id, user });
+
     socket.current.on("receive-message", (message) => {
-      setChatBoxData((prev) => {
-        return { ...prev, channelMessages: [...prev.channelMessages, message] };
-      });
+      setChatBoxData((prev) => ({
+        ...prev,
+        channelMessages: [...prev.channelMessages, message],
+      }));
     });
+
+    // Cleanup function
     return () => {
+      socket.current.off("receive-message");
+      socket.current.off("join");
       if (socket.current.connected) {
         socket.current.disconnect();
       }
