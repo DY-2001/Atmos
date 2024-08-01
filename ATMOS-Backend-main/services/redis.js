@@ -1,51 +1,21 @@
-// const redis = require('redis');
-// const mongoose = require('mongoose')
-// const exec = mongoose.Query.prototype.exec;
-// const client = redis.createClient({
-//     password: 'RZeCWM8cW5R6sDX490RZygAXf3nfdaLa',
-//     socket: {
-//         host: 'redis-18403.c282.east-us-mz.azure.cloud.redislabs.com',
-//         port: 18403
-//     }
-// });
+const { createClient } = require("redis");
 
-// (async () => {
-//     client.on("error", (error) => console.error(`Error : ${error}`));
-//     client.on("connect", () => console.log(`Connected to redis`));
-//     await client.connect();
-// })();
+const client = createClient({
+  password: "mDtTY4vZ3ePvfPQffTWmWCYdEkYCmKkf",
+  socket: {
+    host: "redis-11949.c305.ap-south-1-1.ec2.redns.redis-cloud.com",
+    port: 11949,
+  },
+});
 
-// mongoose.Query.prototype.cache = function (options = {}) {
-//     this.useCache = true;
-//     this.hashKey = JSON.stringify(options.key || 'default')
-//     return this;
-// }
+client.on("error", (err) => {
+  console.log("Redis Client Error", err);
+});
 
-// mongoose.Query.prototype.exec = async function () {
-//     if (!this.useCache) {
-//         return exec.apply(this, arguments)
-//     }
+const clientConnect = async () => {
+  await client.connect();
+};
 
-//     const key = JSON.stringify(Object.assign({}, this.getQuery(), {
-//         collection: this.mongooseCollection.name
-//     }))
-//     const cachedVal = await client.HGET(this.hashKey, key)
-//     if (cachedVal) {
-//         const user = JSON.parse(cachedVal)
-//         console.log("From redis", user)
-//         return Array.isArray(user)
-//         ? user.map(u => new this.model(u))
-//         : new this.model(user);
-//     }
-//     const result = await exec.apply(this, arguments)
-//     await client.HSET(this.hashKey, key, JSON.stringify(result))
-//     return result
-// }
+clientConnect();
 
-// module.exports = {
-//     async clearHash(hashKey) {
-//         client.del(JSON.stringify(hashKey));
-//         client.flushAll()
-//     }
-// };
-
+module.exports = client;
