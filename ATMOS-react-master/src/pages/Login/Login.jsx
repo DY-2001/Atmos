@@ -6,7 +6,6 @@ import { useDispatch } from "react-redux";
 import { login } from "../../features/userSlice";
 
 import styles from './Login.module.css';
-import bcrypt from "bcryptjs";
 
 function Login() {
     const [email, setEmail] = useState("");

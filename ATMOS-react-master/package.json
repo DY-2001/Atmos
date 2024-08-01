@@ -39,10 +39,8 @@
     "@tiptap/react": "^2.0.0-beta.220",
     "@tiptap/starter-kit": "^2.0.0-beta.220",
     "aos": "^2.3.4",
-    "bcryptjs": "^2.4.3",
     "bootstrap": "^5.2.2",
     "chart.js": "^3.9.1",
-    "crypto-browserify": "^3.12.0",
     "dayjs": "^1.11.7",
     "formik": "^2.2.9",
     "framer-motion": "^10.8.4",
@@ -54,7 +52,6 @@
     "rc-tween-one": "^3.0.6",
     "react": "^18.2.0",
     "react-admin": "^4.9.0",
-    "react-app-rewired": "^2.2.1",
     "react-beautiful-dnd": "^13.1.1",
     "react-bootstrap": "^2.5.0",
     "react-chartjs-2": "^4.3.1",
@@ -83,7 +80,7 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "set PORT=3000 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

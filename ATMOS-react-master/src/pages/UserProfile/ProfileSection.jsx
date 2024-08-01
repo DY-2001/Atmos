@@ -5,11 +5,11 @@ import { Image, FileInput, Box } from '@mantine/core';
 import { ButtonProgress } from "./ButtonProgress";
 
 
-import bcrypt from "bcryptjs";   // For hashing the password before saving it to the json server
+// import bcrypt from "bcryptjs";   // For hashing the password before saving it to the json server
 
 import styles from "./ProfileSection.module.css";
 
-const salt = bcrypt.genSaltSync(10);
+// const salt = bcrypt.genSaltSync(10);
 
 const ProfileSection = ({ user, setUser }) => {
     const [userName, setUserName] = useState(user.userName);
@@ -29,9 +29,9 @@ const ProfileSection = ({ user, setUser }) => {
         // console.log('In handle click');
         let hashedPassword = password;
         if (isEdit) {
-            if (password !== user.password) {
-                hashedPassword = bcrypt.hashSync(password, salt);
-            }
+            // if (password !== user.password) {
+            //     hashedPassword = bcrypt.hashSync(password, salt);
+            // }
             const updatedUser = { userName, email: emailId, password: hashedPassword };
             const res = await fetch(process.env.REACT_APP_BACKEND_URL + "/user/updateUser", {
                 method: "POST",
@@ -178,7 +178,7 @@ const ProfileSection = ({ user, setUser }) => {
                                     </Form.Label>
                                     <Col className="text-center" lg={10} sm={12}>
                                         {isEdit &&
-                                            <Form.Control type="password" placeholder="Password" defaultValue={password} onChange={(e) => setPassword(e.target.value)} disabled={!isEdit} />
+                                            <Form.Control type="password" placeholder="Password" defaultValue={password} onChange={(e) => setPassword(e.target.value)} disabled={true} />
                                         }
                                         {!isEdit &&
                                             <div className="fw-bold border-bottom border-dark border-opacity-50 fs-4" style={{ color: "#05386B" }}>....................</div>
