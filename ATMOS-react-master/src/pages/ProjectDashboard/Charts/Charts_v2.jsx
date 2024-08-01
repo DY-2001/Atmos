@@ -55,7 +55,7 @@ const Charts_v2 = ({ projectId, projectInfo, setProjectInfo, userInfo }) => {
     const [ChartAccess, setChartAccess] = useState('Low');
 
     // console.log(userInfo, 'userInfo from charts_v2');
-    console.log(projectInfo, 'projectInfo from charts_v2');
+    // console.log(projectInfo, 'projectInfo from charts_v2');
 
 
 

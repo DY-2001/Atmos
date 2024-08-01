@@ -135,12 +135,23 @@ const Chat = () => {
   const socket = useRef(null);
 
   useEffect(() => {
+    if (!channel) return;
     socket.current = socketInit();
-    
-  }, []);
+    socket.current.emit("join", { roomId: channel.id, user });
+    socket.current.on("receive-message", (message) => {
+      setChatBoxData((prev) => {
+        return { ...prev, channelMessages: [...prev.channelMessages, message] };
+      });
+    });
+    return () => {
+      if (socket.current.connected) {
+        socket.current.disconnect();
+      }
+    };
+  }, [channel]);
 
   const handleSendMessage = (channelId) => {
-    if (!inputMessage || !user) return;
+    if (!inputMessage || !user || !channelId) return;
     const newMessage = {
       userId: user?._id,
       userName: user.userName,
@@ -148,6 +159,16 @@ const Chat = () => {
     };
     setInputMessage("");
 
+    if (socket.current) {
+      socket.current.emit(
+        "send-message",
+        {
+          ...newMessage,
+          createdAt: new Date(),
+        },
+        channelId
+      );
+    }
     const addChat = async () => {
       try {
         const res = await fetch(

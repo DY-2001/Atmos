@@ -50,7 +50,7 @@ const useStyles = createStyles((themes) => ({
 const LowAcessChartControl = ({ projectInfo, userInfo }) => {
 
     const { classes, } = useStyles();
-    console.log(projectInfo, 'projectInfo from LowAcessChartControl');
+    // console.log(projectInfo, 'projectInfo from LowAcessChartControl');
     const [memberList, setMemberList] = useState([]);
 
 

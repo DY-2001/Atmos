@@ -52,7 +52,7 @@ const SectionArena = ({ projectId, projectInfo, setProjectInfo, userInfo, setUse
         },
       });
       const data = await res.json();
-      console.log(data, 'projectInfo from main view');
+      // console.log(data, 'projectInfo from main view');
       setProjectInfo(data.project);
       setSectionList(data.project.projectSectionIdList);
       //calulate the column order

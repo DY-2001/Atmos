@@ -124,7 +124,7 @@ const OverView = ({ projectId, projectInfo, setProjectInfo, userInfo }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  console.log(projectInfo, 'projectInfo from over view');
+  // console.log(projectInfo, 'projectInfo from over view');
 
 
   const [projectName, setProjectName] = useState(projectInfo.projectName);

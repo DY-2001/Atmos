@@ -48,47 +48,16 @@ app.use("/chat", require("./routes/chat-routes"));
 app.use("/admin", require("./routes/admin-routes"));
 app.use("/message", require("./routes/message-routes"));
 
-const socketUserMap = {};
-
 io.on("connection", (socket) => {
   console.log("New connection", socket.id);
-  //   socket.on(ACTIONS.JOIN, ({ roomId, user }) => {
-  //     socketUserMap[socket.id] = user;
-  //     const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
-  //     clients.forEach((clientId) => {
-  //       io.to(clientId).emit(ACTIONS.ADD_PEER, {
-  //         peerId: socket.id,
-  //         createOffer: false,
-  //         user,
-  //       });
-  //       socket.emit(ACTIONS.ADD_PEER, {
-  //         peerId: clientId,
-  //         createOffer: true,
-  //         user: socketUserMap[clientId],
-  //       });
-  //     });
-  //     socket.join(roomId);
-  //   });
+  socket.on("join", ({ roomId, user }) => {
+    socket.join(roomId);
+  });
 
-  //   const leaveRoom = () => {
-  //     const { rooms } = socket;
-  //     Array.from(rooms).forEach((roomId) => {
-  //       const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
-  //       clients.forEach((clientId) => {
-  //         io.to(clientId).emit(ACTIONS.REMOVE_PEER, {
-  //           peerId: socket.id,
-  //           userId: socketUserMap[socket.id]?.id,
-  //         });
-
-  //         // socket.emit(ACTIONS.REMOVE_PEER, {
-  //         //     peerId: clientId,
-  //         //     userId: socketUserMap[clientId]?.id,
-  //         // });
-  //       });
-  //       socket.leave(roomId);
-  //     });
-  //     delete socketUserMap[socket.id];
-  //   };
+  socket.on("send-message", (message, channelId) => {
+    const clients = Array.from(io.sockets.adapter.rooms.get(channelId) || []);
+    io.to(channelId).emit("receive-message", message);
+  });
 });
 
 // module.exports = app;
