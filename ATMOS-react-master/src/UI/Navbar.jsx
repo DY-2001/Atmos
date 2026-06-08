@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Dropdown from "react-bootstrap/Dropdown";
 
 import UserDropdown from "./UserDropdown";
 
@@ -24,11 +23,7 @@ const Navbar = () => {
         <Link className="link" to="/projects">
           Projects
         </Link>
-        <Link
-          className="link"
-          
-          to="/messages"
-        >
+        <Link className="link" to="/messages">
           Messages
         </Link>
         <Link className="link" to="/notes">

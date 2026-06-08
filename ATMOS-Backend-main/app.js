@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const fs = require("fs");
 const app = express();
 const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 const swaggerUI = require("swagger-ui-express");
 var path = require("path");
 var accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
@@ -38,6 +39,16 @@ app.use(
     origin: process.env.CLIENT_URL,
   })
 ); // Use this after the variable declaration
+
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+	limit: 100,
+	standardHeaders: 'draft-8',
+	legacyHeaders: false,
+})
+
+
+app.use(limiter);
 
 app.use("/user", require("./routes/user-routes"));
 app.use("/project", require("./routes/project-routes"));

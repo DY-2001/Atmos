@@ -28,42 +28,42 @@ const AIAgent = () => {
   // For now we rely on the history coming back from the active POST.
 
   useEffect(() => {
+    const fetchInitialHistory = async () => {
+      try {
+        const res = await fetch(`${BACKEND}/agent/get-questions`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch history");
+        const data = await res.json();
+
+        if (data.success && data.history && Array.isArray(data.history)) {
+          // Load conversation history from backend
+          const historyList = [defaultGreeting];
+          data.history.forEach((convo) => {
+            historyList.push({ role: "user", text: convo.question });
+            historyList.push({ role: "agent", text: convo.answer });
+          });
+          setMessages(historyList);
+
+          // Scroll to bottom after loading
+          setTimeout(() => {
+            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+          }, 0);
+        }
+      } catch (err) {
+        console.error("Error fetching initial history:", err);
+      }
+    };
+
     if (open) {
       fetchInitialHistory();
     }
-  }, [open]);
-
-  const fetchInitialHistory = async () => {
-    try {
-      const res = await fetch(`${BACKEND}/agent/get-questions`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) throw new Error("Failed to fetch history");
-      const data = await res.json();
-
-      if (data.success && data.history && Array.isArray(data.history)) {
-        // Load conversation history from backend
-        const historyList = [defaultGreeting];
-        data.history.forEach((convo) => {
-          historyList.push({ role: "user", text: convo.question });
-          historyList.push({ role: "agent", text: convo.answer });
-        });
-        setMessages(historyList);
-
-        // Scroll to bottom after loading
-        setTimeout(() => {
-          bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-        }, 0);
-      }
-    } catch (err) {
-      console.error("Error fetching initial history:", err);
-    }
-  };
+  }, [open, token]);
 
   const sendMessage = async () => {
     const text = input.trim();

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Navbar from "./UI/Navbar";
 import Home from "./pages/Home/Home";
 import HomePage from "./pages/HomePage/Home";
 import Projects from "./pages/Projects/Projects";
@@ -42,7 +41,7 @@ const App = () => {
   const reduxToken = useSelector((state) => state.user?.token);
   const localToken = localStorage.getItem("token");
 
-  // If Redux has it, use it. If Redux doesn't but local does (e.g. refresh), use it. 
+  // If Redux has it, use it. If Redux doesn't but local does (e.g. refresh), use it.
   // But if the user logs out, localToken becomes null, so token becomes null.
   const token = reduxToken || localToken;
 
@@ -57,7 +56,7 @@ const App = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const data = await res.json();
       // console.log(data, "userInfo from appJS");
@@ -67,7 +66,7 @@ const App = () => {
     if (token) {
       getUser();
     }
-  }, []);
+  }, [dispatch, token]);
   return (
     <div>
       <Router>
@@ -135,7 +134,6 @@ const App = () => {
           </Routes>
 
           {token && <AIAgent />}
-
         </div>
       </Router>
     </div>
