@@ -25,9 +25,11 @@ import AboutUS from "./pages/AboutUs/AboutUs";
 import Contact from "./pages/ContactUs/Contact";
 import Notes from "./pages/Notes/Notes";
 import { login } from "./features/userSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import NoteEditor from "./pages/Notes/NoteEditor";
 import Page404 from "./pages/Extra/Page404";
+
+import AIAgent from "./UI/AIAgent/AIAgent";
 
 // 6,50,000 + 2,50,000 + 1,00,000 + 9,10,000 + 1,00,000
 
@@ -35,7 +37,14 @@ import Page404 from "./pages/Extra/Page404";
 
 const App = () => {
   const dispatch = useDispatch();
-  const token = localStorage.getItem("token");
+  // Read token from Redux state (updates on login/logout)
+  // Initially check localStorage if Redux is empty at boot
+  const reduxToken = useSelector((state) => state.user?.token);
+  const localToken = localStorage.getItem("token");
+
+  // If Redux has it, use it. If Redux doesn't but local does (e.g. refresh), use it. 
+  // But if the user logs out, localToken becomes null, so token becomes null.
+  const token = reduxToken || localToken;
 
   useEffect(() => {
     async function getUser() {
@@ -124,6 +133,9 @@ const App = () => {
 
             <Route path="*" element={<Page404 />} />
           </Routes>
+
+          {token && <AIAgent />}
+
         </div>
       </Router>
     </div>

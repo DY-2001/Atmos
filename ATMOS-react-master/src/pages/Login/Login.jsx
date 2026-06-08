@@ -31,8 +31,7 @@ function Login() {
             alert(data.message);
         }
         else {
-            // dispatch(login(data));
-            localStorage.setItem('token', data.token);
+            dispatch(login(data)); // This updates Redux and localStorage
             navigate('/home');
         }
     }

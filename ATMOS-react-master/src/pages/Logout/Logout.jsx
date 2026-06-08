@@ -10,8 +10,7 @@ const Logout = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        localStorage.removeItem("token");
-        // dispatch(logout());
+        dispatch(logout()); // Let the userSlice handle clearing storage consistently
         navigate("/login");
     }, []);
 
