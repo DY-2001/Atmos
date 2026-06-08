@@ -144,7 +144,7 @@ User's Latest Question: "${question}"
         `;
 
     // Request a response from the Gemini model using the globally initialized SDK
-    const model = global.ai.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = global.ai.getGenerativeModel({ model: "gemini-3.5-flash" });
     const result = await model.generateContent(prompt);
     const reply = result.response.text();
 
