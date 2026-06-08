@@ -47,6 +47,7 @@ app.use("/note", require("./routes/note-routes"));
 app.use("/chat", require("./routes/chat-routes"));
 app.use("/admin", require("./routes/admin-routes"));
 app.use("/message", require("./routes/message-routes"));
+app.use("/agent", require("./routes/agent-routes"));
 
 io.on("connection", (socket) => {
   console.log("New connection", socket.id);
