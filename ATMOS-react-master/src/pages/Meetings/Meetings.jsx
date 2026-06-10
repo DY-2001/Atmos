@@ -124,10 +124,9 @@ const useStyles = createStyles((theme) => ({
     display: "flex",
     flexWrap: "wrap",
     justifyContent: "center",
-    alignContent: "flex-start",
+    alignContent: "center",
     gap: theme.spacing.md,
     flex: 1,
-    border: "2px solid red",
   },
   videoTile: {
     position: "relative",
@@ -137,7 +136,6 @@ const useStyles = createStyles((theme) => ({
     borderRadius: theme.radius.md,
     backgroundColor: "#020617",
     border: "1px solid rgba(148, 163, 184, 0.24)",
-    border: "2px solid yellow",
   },
   emptyVideoTile: {
     position: "relative",
