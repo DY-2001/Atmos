@@ -17,12 +17,12 @@ const Notes = () => {
   const [user, setUser] = useState(null);
 
   const colorCodes = [
-    "#ff6b6b",
-    "#f06595",
-    "#cc5de8",
-    "#845ef7",
+    "#2e61a3",
+    "#a5b6f0",
+    "#205281",
+    "#1363f8",
     "#5c7cfa",
-    "#4dabf7",
+    "#369ef3",
   ];
 
   useEffect(() => {
@@ -106,22 +106,22 @@ const Notes = () => {
   // }
 
   randomColor.push(
-    "#FF6666",
-    "#FFB266",
-    "#B2FF66",
-    "#FFCCFF",
-    "#33FF99",
-    "#66B2FF",
-    "#B266FF",
-    "#FF3333",
-    "#FF33FF",
-    "#FFFF00",
-    "#33FFFF",
-    "#FF9999",
+    "#a2defa",
+    "#9decfa",
+    "#4bc8fa",
+    "#57e5f8",
+    "#5f8fe9",
+    "#5068f5",
+    "#0a2f7e",
+    "#1f3da0",
+    "#4b7bc4",
+    "#619bd1",
+    "#647ab8",
+    "#377de6",
     "#9999FF",
     "#6495ED",
-    "#00FF80",
-    "#80FF00"
+    "#5a72f8",
+    "#3471f5"
   );
   let colorChoice = 0;
 

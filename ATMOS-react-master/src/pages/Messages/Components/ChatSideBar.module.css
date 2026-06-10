@@ -24,14 +24,14 @@
 }
 
 .tabContainer:hover {
-    background-color: #e4fce1;
+    background-color: #40c6dd;
 }
 
 .selectedTab {
-    background-color: #c0f7b7;
+    background-color: #718eec;
     border-bottom: 2px solid #3FA2F6;
 }
 
 .selectedTab:hover {
-    background-color: #c0f7b7;
+    background-color: #2291d1;
 }

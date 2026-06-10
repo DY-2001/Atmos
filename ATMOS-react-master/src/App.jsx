@@ -23,6 +23,7 @@ import LogoutAdmin from "./pages/Admin-portal/Login/LogoutAdmin";
 import AboutUS from "./pages/AboutUs/AboutUs";
 import Contact from "./pages/ContactUs/Contact";
 import Notes from "./pages/Notes/Notes";
+import Meetings from "./pages/Meetings/Meetings";
 import { login } from "./features/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import NoteEditor from "./pages/Notes/NoteEditor";
@@ -81,6 +82,8 @@ const App = () => {
             <Route exact path="/home" element={<Home />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/message" element={<Chat />} />
+            <Route path="/meetings" element={<Meetings />} />
+            <Route path="/meetings/:roomCode" element={<Meetings />} />
             <Route path="/createproject" element={<CreateProject />} />
             <Route
               exact

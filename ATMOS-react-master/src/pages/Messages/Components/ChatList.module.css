@@ -25,15 +25,15 @@
 }
 
 .messageTabActive {
-    background-color: #c0f7b7;
+    background-color: #7191eb;
 }
 
 .selectedMessageTab {
-    background-color: #90fd80;
+    background-color: #b6c9f3;
 }
 
 .selectedMessageTab:hover {
-    background-color: #90fd80;
+    background-color: #80a8fd;
 }
 
 .messageTabName {

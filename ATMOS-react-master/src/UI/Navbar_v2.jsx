@@ -88,6 +88,10 @@ const links = [
     link: "/notes",
     label: "Notes",
   },
+  {
+    link: "/meetings",
+    label: "Meetings",
+  },
 ];
 
 const Navbar_v2 = ({ activeLink, user }) => {

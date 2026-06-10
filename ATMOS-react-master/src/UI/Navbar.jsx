@@ -23,11 +23,14 @@ const Navbar = () => {
         <Link className="link" to="/projects">
           Projects
         </Link>
-        <Link className="link" to="/messages">
+        <Link className="link" to="/message">
           Messages
         </Link>
         <Link className="link" to="/notes">
           Notes
+        </Link>
+        <Link className="link" to="/meetings">
+          Meetings
         </Link>
       </div>
     </nav>

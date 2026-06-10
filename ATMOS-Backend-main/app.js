@@ -56,6 +56,7 @@ app.use("/section", require("./routes/section-routes"));
 app.use("/task", require("./routes/task-routes"));
 app.use("/note", require("./routes/note-routes"));
 app.use("/chat", require("./routes/chat-routes"));
+app.use("/meeting", require("./routes/meeting-routes"));
 app.use("/admin", require("./routes/admin-routes"));
 app.use("/message", require("./routes/message-routes"));
 app.use("/agent", require("./routes/agent-routes"));

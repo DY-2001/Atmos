@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const MeetingRoom = require("../models/MeetingRoom");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { registerValidation, loginValidation } = require("../config/validation");
@@ -65,12 +66,10 @@ const login = async (req, res) => {
     // Check if the password is correct
     const validPass = await bcrypt.compare(req.body.password, user.password);
     if (!validPass)
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Invalid Password! Password do not match!",
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Invalid Password! Password do not match!",
+      });
 
     // Create and assign a token
     const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
@@ -117,8 +116,22 @@ const getUserInfo = async (req, res) => {
       })
       .populate("taskAssignedIdList")
       .populate("favProjectIdList")
-      .select({ password: 0 })
-      // .cache()
+      .populate({
+        path: "meetingRoomIdList",
+        model: MeetingRoom,
+        populate: [
+          {
+            path: "createdBy",
+            model: "User",
+          },
+          {
+            path: "members.userId",
+            model: "User",
+          },
+        ],
+      })
+      .select({ password: 0 });
+    // .cache()
 
     res.status(200).json({
       success: true,
@@ -168,7 +181,7 @@ const uploadAvatar = async (req, res) => {
     const user = await User.findByIdAndUpdate(
       userId,
       { avatar: avatarSrc },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
     res.status(200).json({
       success: true,
@@ -194,7 +207,7 @@ const addProjectToFavorite = async (req, res) => {
     const user = await User.findByIdAndUpdate(
       userId,
       { $addToSet: { favProjectIdList: projectId } },
-      { new: true }
+      { new: true },
     );
     // console.log(user, "userInfo from addProjectToFavorite");
     res.status(200).json({
@@ -219,7 +232,7 @@ const removeProjectFromFavorite = async (req, res) => {
     const user = await User.findByIdAndUpdate(
       userId,
       { $pull: { favProjectIdList: projectId } },
-      { new: true }
+      { new: true },
     );
     // console.log(user, "userInfo from addProjectToFavorite");
     res.status(200).json({
