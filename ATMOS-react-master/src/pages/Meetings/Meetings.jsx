@@ -566,8 +566,8 @@ const Meetings = () => {
         //   return;
         // }
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: false,
-          audio: false,
+          video: true,
+          audio: true,
         });
 
         if (!isMounted) {
