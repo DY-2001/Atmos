@@ -127,6 +127,7 @@ const useStyles = createStyles((theme) => ({
     alignContent: "flex-start",
     gap: theme.spacing.md,
     flex: 1,
+    border: "2px solid red",
   },
   videoTile: {
     position: "relative",
@@ -136,6 +137,7 @@ const useStyles = createStyles((theme) => ({
     borderRadius: theme.radius.md,
     backgroundColor: "#020617",
     border: "1px solid rgba(148, 163, 184, 0.24)",
+    border: "2px solid yellow",
   },
   emptyVideoTile: {
     position: "relative",
@@ -1180,26 +1182,21 @@ const Meetings = () => {
 
                       {remoteTiles.map((remoteTile) =>
                         remoteTile.stream ? (
-                          <div
-                            className={
+                          <VideoTile
+                            key={remoteTile.socketId}
+                            stream={remoteTile.stream}
+                            className={`${classes.videoTile} ${
                               remoteTile.isSpeaking ? classes.speakingTile : ""
-                            }
+                            }`}
+                            videoClassName={classes.video}
+                            labelClassName={classes.videoLabel}
                           >
-                            <VideoTile
-                              key={remoteTile.socketId}
-                              stream={remoteTile.stream}
-                              label={remoteTile.user?.userName || "Teammate"}
-                              className={classes.videoTile}
-                              videoClassName={classes.video}
-                              labelClassName={classes.videoLabel}
-                            >
-                              <MediaStatusBadges
-                                audio={remoteTile.mediaState?.audio}
-                                video={remoteTile.mediaState?.video}
-                                classes={classes}
-                              />
-                            </VideoTile>
-                          </div>
+                            <MediaStatusBadges
+                              audio={remoteTile.mediaState?.audio}
+                              video={remoteTile.mediaState?.video}
+                              classes={classes}
+                            />
+                          </VideoTile>
                         ) : (
                           <div
                             key={remoteTile.socketId}
