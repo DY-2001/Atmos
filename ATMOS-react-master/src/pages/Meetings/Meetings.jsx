@@ -235,6 +235,10 @@ const useStyles = createStyles((theme) => ({
   mutedText: {
     color: theme.colors.gray[6],
   },
+  speakingTile: {
+    border: "3px solid #22c55e",
+    boxShadow: "0 0 20px #22c55e",
+  },
 }));
 
 const getDisplayName = (member) => {
@@ -497,11 +501,41 @@ const Meetings = () => {
         const [stream] = event.streams;
         if (!stream) return;
 
+        const audioContext = new AudioContext();
+        console.log("audio is coming 0 ", audioContext);
+        const analyser = audioContext.createAnalyser();
+
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+        const detectSpeaking = () => {
+          analyser.getByteFrequencyData(dataArray);
+
+          const volume =
+            dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
+
+
+          setRemoteVideos((prev) =>
+            prev.map((video) =>
+              video.socketId === participant.socketId
+                ? { ...video, isSpeaking: volume > 5 }
+                : video,
+            ),
+          );
+
+          requestAnimationFrame(detectSpeaking);
+        };
+
+        detectSpeaking();
+
         setRemoteVideos((prevVideos) => {
           const nextVideo = {
             socketId: participant.socketId,
             user: participant.user,
             stream,
+            isSpeaking: false,
           };
           const exists = prevVideos.some(
             (video) => video.socketId === participant.socketId,
@@ -577,15 +611,28 @@ const Meetings = () => {
 
         localStreamRef.current = stream;
         setLocalStream(stream);
-        setIsAudioOn(true);
-        setIsVideoOn(true);
         socket.emit("meeting:join", {
           roomCode: selectedRoom.roomCode,
           user,
         });
+        // socket.emit("meeting:media-state", {
+        //   audio: true,
+        //   video: true,
+        // });
+        setIsAudioOn(false);
+        setIsVideoOn(false);
+
+        stream.getAudioTracks().forEach((track) => {
+          track.enabled = false;
+        });
+
+        stream.getVideoTracks().forEach((track) => {
+          track.enabled = false;
+        });
+
         socket.emit("meeting:media-state", {
-          audio: true,
-          video: true,
+          audio: false,
+          video: false,
         });
       } catch (error) {
         setCallError(
@@ -785,6 +832,7 @@ const Meetings = () => {
         ...participant,
         stream: remoteVideo?.stream || null,
         user: remoteVideo?.user || participant.user,
+        isSpeaking: remoteVideo?.isSpeaking || false,
         toneIndex: index % 4,
       };
     });
@@ -1126,20 +1174,26 @@ const Meetings = () => {
 
                       {remoteTiles.map((remoteTile) =>
                         remoteTile.stream ? (
-                          <VideoTile
-                            key={remoteTile.socketId}
-                            stream={remoteTile.stream}
-                            label={remoteTile.user?.userName || "Teammate"}
-                            className={classes.videoTile}
-                            videoClassName={classes.video}
-                            labelClassName={classes.videoLabel}
+                          <div
+                            className={
+                              remoteTile.isSpeaking ? classes.speakingTile : ""
+                            }
                           >
-                            <MediaStatusBadges
-                              audio={remoteTile.mediaState?.audio}
-                              video={remoteTile.mediaState?.video}
-                              classes={classes}
-                            />
-                          </VideoTile>
+                            <VideoTile
+                              key={remoteTile.socketId}
+                              stream={remoteTile.stream}
+                              label={remoteTile.user?.userName || "Teammate"}
+                              className={classes.videoTile}
+                              videoClassName={classes.video}
+                              labelClassName={classes.videoLabel}
+                            >
+                              <MediaStatusBadges
+                                audio={remoteTile.mediaState?.audio}
+                                video={remoteTile.mediaState?.video}
+                                classes={classes}
+                              />
+                            </VideoTile>
+                          </div>
                         ) : (
                           <div
                             key={remoteTile.socketId}
