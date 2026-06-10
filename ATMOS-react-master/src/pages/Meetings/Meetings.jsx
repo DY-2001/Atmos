@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar_v2 from "../../UI/Navbar_v2";
 import socketInit from "../../socket";
@@ -131,16 +137,20 @@ const useStyles = createStyles((theme) => ({
     boxShadow: "inset 0 1px 0 rgba(255,255,255,0.16)",
   },
   tileTone0: {
-    background: "linear-gradient(135deg, #dbeafe 0%, #60a5fa 52%, #1d4ed8 100%)",
+    background:
+      "linear-gradient(135deg, #dbeafe 0%, #60a5fa 52%, #1d4ed8 100%)",
   },
   tileTone1: {
-    background: "linear-gradient(135deg, #eff6ff 0%, #93c5fd 45%, #2563eb 100%)",
+    background:
+      "linear-gradient(135deg, #eff6ff 0%, #93c5fd 45%, #2563eb 100%)",
   },
   tileTone2: {
-    background: "linear-gradient(135deg, #bfdbfe 0%, #3b82f6 48%, #1e3a8a 100%)",
+    background:
+      "linear-gradient(135deg, #bfdbfe 0%, #3b82f6 48%, #1e3a8a 100%)",
   },
   tileTone3: {
-    background: "linear-gradient(135deg, #e0f2fe 0%, #38bdf8 45%, #1d4ed8 100%)",
+    background:
+      "linear-gradient(135deg, #e0f2fe 0%, #38bdf8 45%, #1d4ed8 100%)",
   },
   emptyTileContent: {
     minHeight: 220,
@@ -430,7 +440,9 @@ const Meetings = () => {
       prevVideos.filter((video) => video.socketId !== socketId),
     );
     setRemoteParticipants((prevParticipants) =>
-      prevParticipants.filter((participant) => participant.socketId !== socketId),
+      prevParticipants.filter(
+        (participant) => participant.socketId !== socketId,
+      ),
     );
   }, []);
 
@@ -534,25 +546,25 @@ const Meetings = () => {
     const startMeeting = async () => {
       // const TEST_WITHOUT_MEDIA = true;
       try {
-      //   if (TEST_WITHOUT_MEDIA) {
-      //   const emptyStream = new MediaStream();
+        // if (TEST_WITHOUT_MEDIA) {
+        //   const emptyStream = new MediaStream();
 
-      //   localStreamRef.current = emptyStream;
-      //   setLocalStream(emptyStream);
-      //   setIsAudioOn(false);
-      //   setIsVideoOn(false);
+        //   localStreamRef.current = emptyStream;
+        //   setLocalStream(emptyStream);
+        //   setIsAudioOn(false);
+        //   setIsVideoOn(false);
 
-      //   socket.emit("meeting:join", {
-      //     roomCode: selectedRoom.roomCode,
-      //     user,
-      //   });
-      //   socket.emit("meeting:media-state", {
-      //     audio: false,
-      //     video: false,
-      //   });
+        //   socket.emit("meeting:join", {
+        //     roomCode: selectedRoom.roomCode,
+        //     user,
+        //   });
+        //   socket.emit("meeting:media-state", {
+        //     audio: false,
+        //     video: false,
+        //   });
 
-      //   return;
-      // }
+        //   return;
+        // }
         const stream = await navigator.mediaDevices.getUserMedia({
           video: false,
           audio: false,
@@ -797,6 +809,24 @@ const Meetings = () => {
     return Boolean(localStream?.getVideoTracks().length);
   }, [localStream]);
 
+  const leaveCall = () => {
+    socketRef.current?.emit("meeting:leave");
+
+    peersRef.current.forEach((peer) => peer.close());
+    peersRef.current.clear();
+
+    localStreamRef.current?.getTracks().forEach((track) => {
+      track.stop();
+    });
+
+    localStreamRef.current = null;
+    setLocalStream(null);
+    setRemoteVideos([]);
+    setRemoteParticipants([]);
+
+    navigate("/meetings");
+  };
+
   return (
     <div className={classes.page}>
       {user && <Navbar_v2 activeLink="/meetings" user={user} />}
@@ -921,7 +951,7 @@ const Meetings = () => {
                           </Text>
                         </div>
                         <Badge variant="light" color="blue">
-                          {room.members?.length || 0}
+                          {room.members?.length || 0} members
                         </Badge>
                       </Group>
                       <Group spacing={6} mt="sm">
@@ -964,8 +994,8 @@ const Meetings = () => {
                             Copy link
                           </Button>
                           <Button
-                            size="xs"
-                            rightIcon={<IconArrowRight size={14} />}
+                            // styles={{padding: "6px 20px"}}
+                            // rightIcon={<IconArrowRight size={14} />}
                             onClick={(event) => {
                               event.stopPropagation();
                               navigate(`/meetings/${room.roomCode}`);
@@ -998,24 +1028,41 @@ const Meetings = () => {
                       Room code: {selectedRoom.roomCode}
                     </Text>
                   </div>
-                  <Badge variant="light" color="teal">
-                    Live room
-                  </Badge>
+
+                  <Group spacing={6}>
+                    <div
+                      style={{
+                        width: "10px",
+                        height: "10px",
+                        borderRadius: "50%",
+                        backgroundColor: "#22c55e",
+                        boxShadow: "0 0 8px #22c55e",
+                        animation: "pulse 1.5s infinite",
+                      }}
+                      className={classes.liveDot}
+                    />
+                    <Text color="teal" weight={600}>
+                      Live Room
+                    </Text>
+                  </Group>
                 </Group>
 
                 <Group position="apart" align="center">
                   <Group spacing="xs">
                     <IconUsers size={16} />
                     <Text size="sm">
-                      {selectedRoom.members?.length || 0} members
+                      {remoteParticipants.length + 1} people joined
                     </Text>
                   </Group>
-                  <Button
+                  {/* <Button
                     variant="outline"
                     leftIcon={<IconCopy size={14} />}
                     onClick={() => copyInviteLink(selectedRoom)}
                   >
                     Copy invite link
+                  </Button> */}
+                  <Button color="red" onClick={leaveCall}>
+                    Leave Call
                   </Button>
                 </Group>
 
@@ -1121,7 +1168,6 @@ const Meetings = () => {
                     </div>
                   )}
                 </div>
-
               </Stack>
             ) : (
               <Stack
