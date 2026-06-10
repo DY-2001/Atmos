@@ -243,8 +243,8 @@ const useStyles = createStyles((theme) => ({
     color: theme.colors.gray[6],
   },
   speakingTile: {
-    border: "3px solid #22c55e",
-    boxShadow: "0 0 20px #22c55e",
+    border: "1px solid #22c55e",
+    boxShadow: "0 0 10px #22c55e",
   },
 }));
 
@@ -361,6 +361,7 @@ const Meetings = () => {
   const peersRef = useRef(new Map());
   const [createRoomOpened, { open: openCreateRoom, close: closeCreateRoom }] =
     useDisclosure(false);
+  const [isLocalSpeaking, setIsLocalSpeaking] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -609,6 +610,27 @@ const Meetings = () => {
           video: true,
           audio: true,
         });
+
+        const audioContext = new AudioContext();
+        const analyser = audioContext.createAnalyser();
+
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+        const detectLocalSpeaking = () => {
+          analyser.getByteFrequencyData(dataArray);
+
+          const volume =
+            dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
+
+          setIsLocalSpeaking(volume > 5);
+
+          requestAnimationFrame(detectLocalSpeaking);
+        };
+
+        detectLocalSpeaking();
 
         if (!isMounted) {
           stream.getTracks().forEach((track) => track.stop());
@@ -1132,7 +1154,9 @@ const Meetings = () => {
                           stream={localStream}
                           label={`${user?.userName || "You"} (you)`}
                           muted
-                          className={classes.videoTile}
+                          className={`${classes.videoTile} ${
+                            isLocalSpeaking ? classes.speakingTile : ""
+                          }`}
                           videoClassName={classes.video}
                           labelClassName={classes.videoLabel}
                         >
@@ -1150,7 +1174,11 @@ const Meetings = () => {
                         </VideoTile>
                       ) : localStream ? (
                         <div
-                          className={`${classes.emptyVideoTile} ${classes.tileTone0}`}
+                          className={`
+    ${classes.emptyVideoTile}
+    ${classes.tileTone0}
+    ${isLocalSpeaking ? classes.speakingTile : ""}
+  `}
                         >
                           <div className={classes.emptyTileContent}>
                             <div className={classes.participantInitials}>
