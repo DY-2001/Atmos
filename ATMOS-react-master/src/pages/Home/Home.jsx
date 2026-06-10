@@ -138,13 +138,24 @@ const Home = () => {
                       minWidth: 180,
                     }}
                   >
-                    <Text size="sm" weight={600} lineClamp={1}>
+                    <Text
+                      size="l"
+                      weight={600}
+                      color="rgba(247, 214, 214, 0.72)"
+                      lineClamp={1}
+                    >
                       {room.roomName}
                     </Text>
-                    <Text size="xs" color="rgba(255,255,255,0.72)">
-                      #{room.roomCode}
-                    </Text>
-                    <Text size="xs" color="rgba(255,255,255,0.72)">
+                    <div style={{ marginBottom: "10px" }}>
+                      <Text
+                        size="xs"
+                        color="rgba(255,255,255,0.72)"
+                      >
+                        #{room.roomCode}
+                      </Text>
+                    </div>
+
+                    <Text size="sm" color="rgba(255,255,255,0.72)">
                       {room.members?.length || 0} members
                     </Text>
                   </Paper>
