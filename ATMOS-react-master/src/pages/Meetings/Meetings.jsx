@@ -114,28 +114,35 @@ const useStyles = createStyles((theme) => ({
     flexDirection: "column",
     gap: theme.spacing.md,
   },
+  // videoGrid: {
+  //   display: "grid",
+  //   gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+  //   gap: theme.spacing.md,
+  //   flex: 1,
+  // },
   videoGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignContent: "flex-start",
     gap: theme.spacing.md,
     flex: 1,
   },
   videoTile: {
     position: "relative",
-    minHeight: 220,
+    flex: "0 0 320px",
+    aspectRatio: "16 / 9",
     overflow: "hidden",
     borderRadius: theme.radius.md,
     backgroundColor: "#020617",
     border: "1px solid rgba(148, 163, 184, 0.24)",
   },
   emptyVideoTile: {
-    position: "relative",
-    minHeight: 220,
-    overflow: "hidden",
-    borderRadius: theme.radius.md,
-    border: "1px solid rgba(147, 197, 253, 0.34)",
-    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.16)",
-  },
+  position: "relative",
+  flex: "0 0 320px",
+  aspectRatio: "16 / 9",
+  overflow: "hidden",
+  borderRadius: theme.radius.md,
   tileTone0: {
     background:
       "linear-gradient(135deg, #dbeafe 0%, #60a5fa 52%, #1d4ed8 100%)",
@@ -153,8 +160,8 @@ const useStyles = createStyles((theme) => ({
       "linear-gradient(135deg, #e0f2fe 0%, #38bdf8 45%, #1d4ed8 100%)",
   },
   emptyTileContent: {
-    minHeight: 220,
-    height: "100%",
+  height: "100%",
+  minHeight: 0,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -174,13 +181,12 @@ const useStyles = createStyles((theme) => ({
     fontSize: 26,
     fontWeight: 800,
   },
-  video: {
-    width: "100%",
-    height: "100%",
-    minHeight: 220,
-    objectFit: "cover",
-    display: "block",
-  },
+ video: {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  display: "block",
+},
   videoLabel: {
     position: "absolute",
     left: theme.spacing.sm,
@@ -515,7 +521,6 @@ const Meetings = () => {
 
           const volume =
             dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
-
 
           setRemoteVideos((prev) =>
             prev.map((video) =>
