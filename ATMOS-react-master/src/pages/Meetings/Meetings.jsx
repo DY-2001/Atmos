@@ -1179,7 +1179,7 @@ const Meetings = () => {
                       )}
 
                       {remoteTiles.map((remoteTile) =>
-                        remoteTile.stream ? (
+                        remoteTile.stream && remoteTile.mediaState?.video ? (
                           <VideoTile
                             key={remoteTile.socketId}
                             stream={remoteTile.stream}
