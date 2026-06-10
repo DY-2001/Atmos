@@ -138,11 +138,12 @@ const useStyles = createStyles((theme) => ({
     border: "1px solid rgba(148, 163, 184, 0.24)",
   },
   emptyVideoTile: {
-  position: "relative",
-  flex: "0 0 320px",
-  aspectRatio: "16 / 9",
-  overflow: "hidden",
-  borderRadius: theme.radius.md,
+    position: "relative",
+    flex: "0 0 320px",
+    aspectRatio: "16 / 9",
+    overflow: "hidden",
+    borderRadius: theme.radius.md,
+  },
   tileTone0: {
     background:
       "linear-gradient(135deg, #dbeafe 0%, #60a5fa 52%, #1d4ed8 100%)",
@@ -160,8 +161,8 @@ const useStyles = createStyles((theme) => ({
       "linear-gradient(135deg, #e0f2fe 0%, #38bdf8 45%, #1d4ed8 100%)",
   },
   emptyTileContent: {
-  height: "100%",
-  minHeight: 0,
+    height: "100%",
+    minHeight: 0,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -181,12 +182,12 @@ const useStyles = createStyles((theme) => ({
     fontSize: 26,
     fontWeight: 800,
   },
- video: {
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-  display: "block",
-},
+  video: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    display: "block",
+  },
   videoLabel: {
     position: "absolute",
     left: theme.spacing.sm,
