@@ -19,6 +19,7 @@ const io = require("socket.io")(server, {
   cors: {
     origin: process.env.CLIENT_URL,
     methods: ["GET", "POST"],
+    // origin: "*",
   },
 });
 //  this is app
@@ -64,6 +65,7 @@ app.use(
   cors({
     credentials: true,
     origin: process.env.CLIENT_URL,
+    // origin: "*",
   })
 ); // Use this after the variable declaration
 
@@ -116,6 +118,10 @@ io.on("connection", (socket) => {
         userName: user?.userName || "Guest",
         avatar: user?.avatar || null,
       },
+      // mediaState: {
+      //   audio: false,
+      //   video: false,
+      // },
     };
 
     socket.join(roomCode);
@@ -147,6 +153,25 @@ io.on("connection", (socket) => {
     socket.to(to).emit("meeting:ice-candidate", {
       from: socket.id,
       candidate,
+    });
+  });
+
+  socket.on("meeting:media-state", ({ audio, video }) => {
+    const { roomCode } = socket.data.meeting || {};
+    if (!roomCode) return;
+
+    const room = meetingRooms.get(roomCode);
+    const participant = room?.get(socket.id);
+    if (!participant) return;
+
+    participant.mediaState = {
+      audio: Boolean(audio),
+      video: Boolean(video),
+    };
+
+    socket.to(roomCode).emit("meeting:media-state", {
+      socketId: socket.id,
+      mediaState: participant.mediaState,
     });
   });
 

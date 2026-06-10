@@ -20,8 +20,11 @@ import {
 import {
   IconArrowRight,
   IconCopy,
+  IconMicrophone,
+  IconMicrophoneOff,
   IconUsers,
   IconVideo,
+  IconVideoOff,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -119,6 +122,48 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: "#020617",
     border: "1px solid rgba(148, 163, 184, 0.24)",
   },
+  emptyVideoTile: {
+    position: "relative",
+    minHeight: 220,
+    overflow: "hidden",
+    borderRadius: theme.radius.md,
+    border: "1px solid rgba(147, 197, 253, 0.34)",
+    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.16)",
+  },
+  tileTone0: {
+    background: "linear-gradient(135deg, #dbeafe 0%, #60a5fa 52%, #1d4ed8 100%)",
+  },
+  tileTone1: {
+    background: "linear-gradient(135deg, #eff6ff 0%, #93c5fd 45%, #2563eb 100%)",
+  },
+  tileTone2: {
+    background: "linear-gradient(135deg, #bfdbfe 0%, #3b82f6 48%, #1e3a8a 100%)",
+  },
+  tileTone3: {
+    background: "linear-gradient(135deg, #e0f2fe 0%, #38bdf8 45%, #1d4ed8 100%)",
+  },
+  emptyTileContent: {
+    minHeight: 220,
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column",
+    gap: theme.spacing.sm,
+    color: "white",
+  },
+  participantInitials: {
+    width: 76,
+    height: 76,
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(15, 23, 42, 0.26)",
+    border: "1px solid rgba(255,255,255,0.45)",
+    fontSize: 26,
+    fontWeight: 800,
+  },
   video: {
     width: "100%",
     height: "100%",
@@ -136,6 +181,36 @@ const useStyles = createStyles((theme) => ({
     color: "white",
     fontSize: theme.fontSizes.xs,
     fontWeight: 600,
+  },
+  mediaBadges: {
+    position: "absolute",
+    top: theme.spacing.sm,
+    right: theme.spacing.sm,
+    display: "flex",
+    gap: 6,
+  },
+  mediaBadge: {
+    width: 30,
+    height: 30,
+    borderRadius: "50%",
+    padding: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "white",
+    backgroundColor: "rgba(238, 31, 31, 0.88)",
+    border: "1px solid rgba(255,255,255,0.18)",
+  },
+  mediaBadgeButton: {
+    cursor: "pointer",
+    transition: "transform 120ms ease, filter 120ms ease",
+    "&:hover": {
+      transform: "translateY(-1px)",
+      filter: "brightness(1.08)",
+    },
+  },
+  mediaBadgeOff: {
+    backgroundColor: "rgba(153, 27, 27, 0.92)",
   },
   callPlaceholder: {
     minHeight: 220,
@@ -160,6 +235,57 @@ const getAvatarSrc = (member) => {
   return member?.userId?.avatar || member?.avatar || null;
 };
 
+const getInitials = (name = "User") => {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+};
+
+const MediaStatusBadges = ({
+  audio,
+  video,
+  classes,
+  onToggleAudio,
+  onToggleVideo,
+}) => {
+  const audioEnabled = Boolean(audio);
+  const videoEnabled = Boolean(video);
+  const AudioBadgeElement = onToggleAudio ? "button" : "div";
+  const VideoBadgeElement = onToggleVideo ? "button" : "div";
+
+  return (
+    <div className={classes.mediaBadges}>
+      <AudioBadgeElement
+        type={onToggleAudio ? "button" : undefined}
+        className={`${classes.mediaBadge} ${
+          audioEnabled ? "" : classes.mediaBadgeOff
+        } ${onToggleAudio ? classes.mediaBadgeButton : ""}`}
+        title={audioEnabled ? "Turn microphone off" : "Turn microphone on"}
+        onClick={onToggleAudio}
+      >
+        {audioEnabled ? (
+          <IconMicrophone size={15} />
+        ) : (
+          <IconMicrophoneOff size={15} />
+        )}
+      </AudioBadgeElement>
+      <VideoBadgeElement
+        type={onToggleVideo ? "button" : undefined}
+        className={`${classes.mediaBadge} ${
+          videoEnabled ? "" : classes.mediaBadgeOff
+        } ${onToggleVideo ? classes.mediaBadgeButton : ""}`}
+        title={videoEnabled ? "Turn camera off" : "Turn camera on"}
+        onClick={onToggleVideo}
+      >
+        {videoEnabled ? <IconVideo size={15} /> : <IconVideoOff size={15} />}
+      </VideoBadgeElement>
+    </div>
+  );
+};
+
 const VideoTile = ({
   stream,
   label,
@@ -167,6 +293,7 @@ const VideoTile = ({
   className,
   videoClassName,
   labelClassName,
+  children,
 }) => {
   const videoRef = useRef(null);
 
@@ -186,6 +313,7 @@ const VideoTile = ({
         muted={muted}
       />
       <div className={labelClassName}>{label}</div>
+      {children}
     </div>
   );
 };
@@ -203,6 +331,7 @@ const Meetings = () => {
   const [creating, setCreating] = useState(false);
   const [localStream, setLocalStream] = useState(null);
   const [remoteVideos, setRemoteVideos] = useState([]);
+  const [remoteParticipants, setRemoteParticipants] = useState([]);
   const [callError, setCallError] = useState("");
   const [isAudioOn, setIsAudioOn] = useState(true);
   const [isVideoOn, setIsVideoOn] = useState(true);
@@ -300,6 +429,28 @@ const Meetings = () => {
     setRemoteVideos((prevVideos) =>
       prevVideos.filter((video) => video.socketId !== socketId),
     );
+    setRemoteParticipants((prevParticipants) =>
+      prevParticipants.filter((participant) => participant.socketId !== socketId),
+    );
+  }, []);
+
+  const upsertRemoteParticipant = useCallback((participant) => {
+    if (!participant?.socketId) return;
+
+    setRemoteParticipants((prevParticipants) => {
+      const exists = prevParticipants.some(
+        (currentParticipant) =>
+          currentParticipant.socketId === participant.socketId,
+      );
+
+      return exists
+        ? prevParticipants.map((currentParticipant) =>
+            currentParticipant.socketId === participant.socketId
+              ? { ...currentParticipant, ...participant }
+              : currentParticipant,
+          )
+        : [...prevParticipants, participant];
+    });
   }, []);
 
   const createPeerConnection = useCallback(
@@ -311,9 +462,15 @@ const Meetings = () => {
         iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
       });
 
-      localStreamRef.current?.getTracks().forEach((track) => {
+      const localTracks = localStreamRef.current?.getTracks() || [];
+      localTracks.forEach((track) => {
         peerConnection.addTrack(track, localStreamRef.current);
       });
+
+      if (localTracks.length === 0) {
+        peerConnection.addTransceiver("video", { direction: "recvonly" });
+        peerConnection.addTransceiver("audio", { direction: "recvonly" });
+      }
 
       peerConnection.onicecandidate = (event) => {
         if (event.candidate) {
@@ -357,9 +514,10 @@ const Meetings = () => {
       };
 
       peersRef.current.set(participant.socketId, peerConnection);
+      upsertRemoteParticipant(participant);
       return peerConnection;
     },
-    [closePeerConnection],
+    [closePeerConnection, upsertRemoteParticipant],
   );
 
   useEffect(() => {
@@ -370,10 +528,31 @@ const Meetings = () => {
     const peerConnections = peersRef.current;
     socketRef.current = socket;
     setRemoteVideos([]);
+    setRemoteParticipants([]);
     setCallError("");
 
     const startMeeting = async () => {
+      // const TEST_WITHOUT_MEDIA = true;
       try {
+      //   if (TEST_WITHOUT_MEDIA) {
+      //   const emptyStream = new MediaStream();
+
+      //   localStreamRef.current = emptyStream;
+      //   setLocalStream(emptyStream);
+      //   setIsAudioOn(false);
+      //   setIsVideoOn(false);
+
+      //   socket.emit("meeting:join", {
+      //     roomCode: selectedRoom.roomCode,
+      //     user,
+      //   });
+      //   socket.emit("meeting:media-state", {
+      //     audio: false,
+      //     video: false,
+      //   });
+
+      //   return;
+      // }
         const stream = await navigator.mediaDevices.getUserMedia({
           video: false,
           audio: false,
@@ -392,6 +571,10 @@ const Meetings = () => {
           roomCode: selectedRoom.roomCode,
           user,
         });
+        socket.emit("meeting:media-state", {
+          audio: true,
+          video: true,
+        });
       } catch (error) {
         setCallError(
           "Camera or microphone access was blocked. Allow permissions and re-open this room.",
@@ -399,7 +582,12 @@ const Meetings = () => {
       }
     };
 
+    const handleParticipants = ({ participants }) => {
+      setRemoteParticipants(participants || []);
+    };
+
     const handleUserJoined = async (participant) => {
+      upsertRemoteParticipant(participant);
       const peerConnection = createPeerConnection(participant);
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
@@ -410,6 +598,10 @@ const Meetings = () => {
     };
 
     const handleOffer = async ({ from, fromUser, offer }) => {
+      upsertRemoteParticipant({
+        socketId: from,
+        user: fromUser || { userName: "Teammate" },
+      });
       const peerConnection = createPeerConnection({
         socketId: from,
         user: fromUser || { userName: "Teammate" },
@@ -445,11 +637,23 @@ const Meetings = () => {
       closePeerConnection(socketId);
     };
 
+    const handleMediaState = ({ socketId, mediaState }) => {
+      setRemoteParticipants((prevParticipants) =>
+        prevParticipants.map((participant) =>
+          participant.socketId === socketId
+            ? { ...participant, mediaState }
+            : participant,
+        ),
+      );
+    };
+
+    socket.on("meeting:participants", handleParticipants);
     socket.on("meeting:user-joined", handleUserJoined);
     socket.on("meeting:offer", handleOffer);
     socket.on("meeting:answer", handleAnswer);
     socket.on("meeting:ice-candidate", handleIceCandidate);
     socket.on("meeting:user-left", handleUserLeft);
+    socket.on("meeting:media-state", handleMediaState);
 
     startMeeting();
 
@@ -462,12 +666,19 @@ const Meetings = () => {
       peerConnections.forEach((peerConnection) => peerConnection.close());
       peerConnections.clear();
       setRemoteVideos([]);
+      setRemoteParticipants([]);
 
       localStreamRef.current?.getTracks().forEach((track) => track.stop());
       localStreamRef.current = null;
       setLocalStream(null);
     };
-  }, [closePeerConnection, createPeerConnection, selectedRoom, user]);
+  }, [
+    closePeerConnection,
+    createPeerConnection,
+    selectedRoom,
+    upsertRemoteParticipant,
+    user,
+  ]);
 
   const availableInvitees = useMemo(() => {
     return allUsers
@@ -523,18 +734,68 @@ const Meetings = () => {
   };
 
   const toggleAudio = () => {
-    localStreamRef.current?.getAudioTracks().forEach((track) => {
-      track.enabled = !isAudioOn;
+    const audioTracks = localStreamRef.current?.getAudioTracks() || [];
+    if (audioTracks.length === 0) return;
+
+    const nextAudioState = !isAudioOn;
+    audioTracks.forEach((track) => {
+      track.enabled = nextAudioState;
     });
-    setIsAudioOn((currentValue) => !currentValue);
+    socketRef.current?.emit("meeting:media-state", {
+      audio: nextAudioState,
+      video: isVideoOn,
+    });
+    setIsAudioOn(nextAudioState);
   };
 
   const toggleVideo = () => {
-    localStreamRef.current?.getVideoTracks().forEach((track) => {
-      track.enabled = !isVideoOn;
+    const videoTracks = localStreamRef.current?.getVideoTracks() || [];
+    if (videoTracks.length === 0) return;
+
+    const nextVideoState = !isVideoOn;
+    videoTracks.forEach((track) => {
+      track.enabled = nextVideoState;
     });
-    setIsVideoOn((currentValue) => !currentValue);
+    socketRef.current?.emit("meeting:media-state", {
+      audio: isAudioOn,
+      video: nextVideoState,
+    });
+    setIsVideoOn(nextVideoState);
   };
+
+  const remoteTiles = useMemo(() => {
+    return remoteParticipants.map((participant, index) => {
+      const remoteVideo = remoteVideos.find(
+        (video) => video.socketId === participant.socketId,
+      );
+
+      return {
+        ...participant,
+        stream: remoteVideo?.stream || null,
+        user: remoteVideo?.user || participant.user,
+        toneIndex: index % 4,
+      };
+    });
+  }, [remoteParticipants, remoteVideos]);
+
+  const localHasVideo = useMemo(() => {
+    return (
+      isVideoOn &&
+      Boolean(
+        localStream
+          ?.getVideoTracks()
+          .some((track) => track.readyState === "live" && track.enabled),
+      )
+    );
+  }, [isVideoOn, localStream]);
+
+  const localCanToggleAudio = useMemo(() => {
+    return Boolean(localStream?.getAudioTracks().length);
+  }, [localStream]);
+
+  const localCanToggleVideo = useMemo(() => {
+    return Boolean(localStream?.getVideoTracks().length);
+  }, [localStream]);
 
   return (
     <div className={classes.page}>
@@ -761,40 +1022,11 @@ const Meetings = () => {
                 <Divider />
 
                 <div className={classes.callStage}>
-                  <Group position="apart" align="center">
-                    <div>
-                      <Text weight={700}>Atmos call</Text>
-                      <Text size="xs" color="rgba(255,255,255,0.68)">
-                        Peer-to-peer WebRTC with Socket.IO signaling
-                      </Text>
-                    </div>
-                    <Group spacing="xs">
-                      <Button
-                        variant={isAudioOn ? "white" : "outline"}
-                        color={isAudioOn ? "dark" : "red"}
-                        size="xs"
-                        onClick={toggleAudio}
-                        disabled={!localStream}
-                      >
-                        {isAudioOn ? "Mute" : "Unmute"}
-                      </Button>
-                      <Button
-                        variant={isVideoOn ? "white" : "outline"}
-                        color={isVideoOn ? "dark" : "red"}
-                        size="xs"
-                        onClick={toggleVideo}
-                        disabled={!localStream}
-                      >
-                        {isVideoOn ? "Camera off" : "Camera on"}
-                      </Button>
-                    </Group>
-                  </Group>
-
                   {callError ? (
                     <div className={classes.callPlaceholder}>{callError}</div>
                   ) : (
                     <div className={classes.videoGrid}>
-                      {localStream ? (
+                      {localStream && localHasVideo ? (
                         <VideoTile
                           stream={localStream}
                           label={`${user?.userName || "You"} (you)`}
@@ -802,37 +1034,94 @@ const Meetings = () => {
                           className={classes.videoTile}
                           videoClassName={classes.video}
                           labelClassName={classes.videoLabel}
-                        />
+                        >
+                          <MediaStatusBadges
+                            audio={isAudioOn}
+                            video={isVideoOn}
+                            classes={classes}
+                            onToggleAudio={
+                              localCanToggleAudio ? toggleAudio : undefined
+                            }
+                            onToggleVideo={
+                              localCanToggleVideo ? toggleVideo : undefined
+                            }
+                          />
+                        </VideoTile>
+                      ) : localStream ? (
+                        <div
+                          className={`${classes.emptyVideoTile} ${classes.tileTone0}`}
+                        >
+                          <div className={classes.emptyTileContent}>
+                            <div className={classes.participantInitials}>
+                              {getInitials(user?.userName || "You")}
+                            </div>
+                          </div>
+                          <div className={classes.videoLabel}>
+                            {`${user?.userName || "You"} (you)`}
+                          </div>
+                          <MediaStatusBadges
+                            audio={isAudioOn}
+                            video={isVideoOn}
+                            classes={classes}
+                            onToggleAudio={
+                              localCanToggleAudio ? toggleAudio : undefined
+                            }
+                            onToggleVideo={
+                              localCanToggleVideo ? toggleVideo : undefined
+                            }
+                          />
+                        </div>
                       ) : (
                         <div className={classes.callPlaceholder}>
                           Starting camera and microphone...
                         </div>
                       )}
 
-                      {remoteVideos.map((remoteVideo) => (
-                        <VideoTile
-                          key={remoteVideo.socketId}
-                          stream={remoteVideo.stream}
-                          label={remoteVideo.user?.userName || "Teammate"}
-                          className={classes.videoTile}
-                          videoClassName={classes.video}
-                          labelClassName={classes.videoLabel}
-                        />
-                      ))}
+                      {remoteTiles.map((remoteTile) =>
+                        remoteTile.stream ? (
+                          <VideoTile
+                            key={remoteTile.socketId}
+                            stream={remoteTile.stream}
+                            label={remoteTile.user?.userName || "Teammate"}
+                            className={classes.videoTile}
+                            videoClassName={classes.video}
+                            labelClassName={classes.videoLabel}
+                          >
+                            <MediaStatusBadges
+                              audio={remoteTile.mediaState?.audio}
+                              video={remoteTile.mediaState?.video}
+                              classes={classes}
+                            />
+                          </VideoTile>
+                        ) : (
+                          <div
+                            key={remoteTile.socketId}
+                            className={`${classes.emptyVideoTile} ${
+                              classes[`tileTone${remoteTile.toneIndex || 0}`]
+                            }`}
+                          >
+                            <div className={classes.emptyTileContent}>
+                              <div className={classes.participantInitials}>
+                                {getInitials(
+                                  remoteTile.user?.userName || "Teammate",
+                                )}
+                              </div>
+                            </div>
+                            <div className={classes.videoLabel}>
+                              {remoteTile.user?.userName || "Teammate"}
+                            </div>
+                            <MediaStatusBadges
+                              audio={remoteTile.mediaState?.audio}
+                              video={remoteTile.mediaState?.video}
+                              classes={classes}
+                            />
+                          </div>
+                        ),
+                      )}
                     </div>
                   )}
                 </div>
 
-                <Group spacing="sm">
-                  {(selectedRoom.members || []).map((member, index) => (
-                    <Badge
-                      key={`${selectedRoom._id}-member-${index}`}
-                      variant="light"
-                    >
-                      {getDisplayName(member)}
-                    </Badge>
-                  ))}
-                </Group>
               </Stack>
             ) : (
               <Stack
