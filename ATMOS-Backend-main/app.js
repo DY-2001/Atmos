@@ -23,6 +23,33 @@ const io = require("socket.io")(server, {
 });
 //  this is app
 
+const meetingRooms = new Map();
+
+const getMeetingParticipants = (roomCode) => {
+  const room = meetingRooms.get(roomCode);
+  if (!room) return [];
+
+  return Array.from(room.values());
+};
+
+const removeMeetingParticipant = (socket) => {
+  const { roomCode } = socket.data.meeting || {};
+  if (!roomCode) return;
+
+  const room = meetingRooms.get(roomCode);
+  if (!room) return;
+
+  room.delete(socket.id);
+  socket.to(roomCode).emit("meeting:user-left", { socketId: socket.id });
+  socket.leave(roomCode);
+
+  if (room.size === 0) {
+    meetingRooms.delete(roomCode);
+  }
+
+  socket.data.meeting = null;
+};
+
 // const corsOptions = {
 //     credentials: true,            //access-control-allow-credentials:true
 // }
@@ -40,15 +67,15 @@ app.use(
   })
 ); // Use this after the variable declaration
 
-const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000,
-	limit: 100,
-	standardHeaders: 'draft-8',
-	legacyHeaders: false,
-})
+// const limiter = rateLimit({
+// 	windowMs: 15 * 60 * 1000,
+// 	limit: 100,
+// 	standardHeaders: 'draft-8',
+// 	legacyHeaders: false,
+// })
 
 
-app.use(limiter);
+// app.use(limiter);
 
 app.use("/user", require("./routes/user-routes"));
 app.use("/project", require("./routes/project-routes"));
@@ -70,6 +97,65 @@ io.on("connection", (socket) => {
   socket.on("send-message", (message, channelId) => {
     const clients = Array.from(io.sockets.adapter.rooms.get(channelId) || []);
     io.to(channelId).emit("receive-message", message);
+  });
+
+  socket.on("meeting:join", ({ roomCode, user }) => {
+    if (!roomCode) return;
+
+    removeMeetingParticipant(socket);
+
+    if (!meetingRooms.has(roomCode)) {
+      meetingRooms.set(roomCode, new Map());
+    }
+
+    const room = meetingRooms.get(roomCode);
+    const participant = {
+      socketId: socket.id,
+      user: {
+        _id: user?._id,
+        userName: user?.userName || "Guest",
+        avatar: user?.avatar || null,
+      },
+    };
+
+    socket.join(roomCode);
+    socket.data.meeting = { roomCode };
+    socket.emit("meeting:participants", {
+      participants: getMeetingParticipants(roomCode),
+    });
+
+    room.set(socket.id, participant);
+    socket.to(roomCode).emit("meeting:user-joined", participant);
+    console.log("meetingRooms after join", meetingRooms);
+  });
+
+  socket.on("meeting:offer", ({ to, offer }) => {
+    const room = meetingRooms.get(socket.data.meeting?.roomCode);
+    const fromParticipant = room?.get(socket.id);
+    socket.to(to).emit("meeting:offer", {
+      from: socket.id,
+      fromUser: fromParticipant?.user,
+      offer,
+    });
+  });
+
+  socket.on("meeting:answer", ({ to, answer }) => {
+    socket.to(to).emit("meeting:answer", { from: socket.id, answer });
+  });
+
+  socket.on("meeting:ice-candidate", ({ to, candidate }) => {
+    socket.to(to).emit("meeting:ice-candidate", {
+      from: socket.id,
+      candidate,
+    });
+  });
+
+  socket.on("meeting:leave", () => {
+    removeMeetingParticipant(socket);
+  });
+
+  socket.on("disconnect", () => {
+    removeMeetingParticipant(socket);
   });
 });
 
