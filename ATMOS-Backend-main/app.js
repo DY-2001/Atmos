@@ -69,15 +69,15 @@ app.use(
   })
 ); // Use this after the variable declaration
 
-// const limiter = rateLimit({
-// 	windowMs: 15 * 60 * 1000,
-// 	limit: 100,
-// 	standardHeaders: 'draft-8',
-// 	legacyHeaders: false,
-// })
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+	limit: 100,
+	standardHeaders: 'draft-8',
+	legacyHeaders: false,
+})
 
 
-// app.use(limiter);
+app.use(limiter);
 
 app.use("/user", require("./routes/user-routes"));
 app.use("/project", require("./routes/project-routes"));
