@@ -12,8 +12,7 @@ services:
     restart: unless-stopped
 
   atmos-backend:
-    build:
-      context: ./ATMOS-Backend-main
+    image: ghcr.io/dy-2001/atmos-backend:latest
     container_name: atmos-backend
     restart: unless-stopped
     env_file:
