@@ -27,10 +27,10 @@ jobs:
       - name: Build Image
         run: |
           docker build \
-            -t ghcr.io/${{ github.repository_owner }}/atmos-backend:latest \
+            -t ghcr.io/dy-2001/atmos-backend:latest \
             ./ATMOS-Backend-main
 
       - name: Push Image
         run: |
           docker push \
-            ghcr.io/${{ github.repository_owner }}/atmos-backend:latest
+            ghcr.io/dy-2001/atmos-backend:latest
