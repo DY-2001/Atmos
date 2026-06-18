@@ -18,7 +18,7 @@ const server = require("http").createServer(app);
 
 const io = require("socket.io")(server, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin: [process.env.CLIENT_URL, "https://myserveratmosbackenduse.vercel.app"],
     methods: ["GET", "POST"],
     // origin: "*",
   },
@@ -65,7 +65,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
     credentials: true,
-    origin: process.env.CLIENT_URL,
+    origin: [process.env.CLIENT_URL, "https://myserveratmosbackenduse.vercel.app"],
     // origin: "*",
   })
 ); // Use this after the variable declaration
