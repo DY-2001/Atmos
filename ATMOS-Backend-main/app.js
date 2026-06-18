@@ -5,6 +5,7 @@ const { connectDB } = require("./config/db");
 const morgan = require("morgan");
 const fs = require("fs");
 const app = express();
+app.set("trust proxy", 1);
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const swaggerUI = require("swagger-ui-express");
